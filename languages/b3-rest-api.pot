@@ -1,0 +1,86 @@
+# Copyright (C) 2014 B3 REST API Extensions
+# This file is distributed under the same license as the B3 REST API Extensions package.
+msgid ""
+msgstr ""
+"Project-Id-Version: B3 REST API Extensions 0.1.0-alpha\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/b3-rest-api\n"
+"POT-Creation-Date: 2014-08-10 23:40:52+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: resources/B3_Comment.php:57 resources/B3_Comment.php:421
+msgid "Invalid post ID."
+msgstr ""
+
+#: resources/B3_Comment.php:63 resources/B3_Comment.php:186
+msgid "Sorry, you cannot read this post."
+msgstr ""
+
+#: resources/B3_Comment.php:100 resources/B3_Comment.php:231
+msgid "There was an error processing your comment."
+msgstr ""
+
+#: resources/B3_Comment.php:120 resources/B3_Comment.php:178
+#: resources/B3_Comment.php:215
+msgid "Invalid comment ID."
+msgstr ""
+
+#: resources/B3_Comment.php:128 resources/B3_Comment.php:427
+msgid "Sorry, you cannot read replies to this post."
+msgstr ""
+
+#: resources/B3_Comment.php:146 resources/B3_Comment.php:160
+msgid "Not yet implemented."
+msgstr ""
+
+#: resources/B3_Comment.php:433
+msgid "Sorry, you cannot reply to this post."
+msgstr ""
+
+#: resources/B3_Comment.php:465
+msgid "Comment author name and email are required."
+msgstr ""
+
+#: resources/B3_Comment.php:471
+msgid "A valid email address is required."
+msgstr ""
+
+#: resources/B3_Comment.php:478
+msgid "Your comment must not be empty."
+msgstr ""
+
+#: resources/B3_Menu.php:58
+msgid "Invalid menu location."
+msgstr ""
+
+#: resources/B3_Sidebar.php:58
+msgid "Sidebar is not active."
+msgstr ""
+
+#: resources/B3_Sidebar.php:64
+msgid "Sidebar has no active widgets."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "B3 REST API Extensions"
+msgstr ""
+
+#. #-#-#-#-#  b3-rest-api.pot (B3 REST API Extensions 0.1.0-alpha)  #-#-#-#-#
+#. Plugin URI of the plugin/theme
+#. #-#-#-#-#  b3-rest-api.pot (B3 REST API Extensions 0.1.0-alpha)  #-#-#-#-#
+#. Author URI of the plugin/theme
+msgid "http://beebeebee.be/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"This plugin extends the WP-API in order to support B3 and your projects."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "The B3 Team"
+msgstr ""
