@@ -40,7 +40,7 @@ class B3_Post extends B3_API {
      */
     public function get_post ( $slug, $context = 'view' ) {
         global $wp_json_posts;
-        $post = get_page_by_path( $slug, OBJECT, 'post' );
+        $post = get_page_by_path( $slug, OBJECT, get_post_types( array( 'public' => true ) ) );
         return $wp_json_posts->get_post( $post->ID, $context );
     }
 
