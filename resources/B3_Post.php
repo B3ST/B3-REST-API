@@ -59,7 +59,7 @@ class B3_Post extends B3_API {
         if ('view-revision' !== $context) {
             $replies = $_post['meta']['links']['replies'];
             $replies = preg_replace( '/\/comments$/', '/b3:replies', $replies );
-            $_post['meta']['links']['replies'] = $replies;
+            $_post['meta']['links']['b3:replies'] = $replies;
         }
 
         return $_post;
