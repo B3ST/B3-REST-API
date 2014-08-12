@@ -251,7 +251,7 @@ class B3_RoutesHelper {
     protected function add_post_type_routes () {
         global $wp_rewrite;
 
-        $post_types = get_post_types( array( 'public' => true ) );
+        $post_types = get_post_types( array( 'show_in_json' => true ) );
 
         foreach ($post_types as $post_type) {
             $route = $wp_rewrite->get_extra_permastruct( $post_type );
@@ -266,7 +266,11 @@ class B3_RoutesHelper {
                       : B3_EP_ALL;
 
             $this->add_routes( $route, $resource, $mask );
+
+            // $this->add_routes( $route, array( 'object' => 'archive', 'type' => $post_type ), B3_EP_PAGE );
         }
+
+//var_export( $wp_rewrite->endpoints ); exit;
     }
 
     /**
