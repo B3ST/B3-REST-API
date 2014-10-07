@@ -4,6 +4,8 @@ This plugin extends the [WP-API](https://github.com/WP-API/WP-API) in order to r
 
 This plugin is under active development and should not be considered for production environments.
 
+[![Build Status](https://scrutinizer-ci.com/g/B3ST/B3-REST-API/badges/build.png?b=master)](https://scrutinizer-ci.com/g/B3ST/B3-REST-API/build-status/master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/B3ST/B3-REST-API/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/B3ST/B3-REST-API/?branch=master)
+
 ## Installation
 
 1. Install the official [WP-API](https://wordpress.org/plugins/json-rest-api/) plugin and activate it.
