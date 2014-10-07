@@ -55,15 +55,15 @@ class B3_Menu extends B3_API {
 
         $menus = get_registered_nav_menus();
 
-        if (!isset( $menus[$location] )) {
+        if ( ! isset( $menus[ $location ] ) ) {
             return new WP_Error( 'json_menu_invalid_id',
                 __( 'Invalid menu location.', 'b3-rest-api' ),
                 array( 'status' => 404 ) );
         }
 
-        $menus = $this->prepare_location( array( $location => $menus[$location] ), $location );
+        $menus = $this->prepare_location( array( $location => $menus[ $location ] ), $location );
 
-        return $menus[$location];
+        return $menus[ $location ];
     }
 
     /**
@@ -73,12 +73,12 @@ class B3_Menu extends B3_API {
      * @param  string $context    The context for the prepared menu. (single|collection)
      * @return array              Menu location entity data.
      */
-    protected function prepare_location ( $_locations, $context = NULL ) {
+    protected function prepare_location ( $_locations, $context = null ) {
 
         $locations = array();
 
-        foreach ($_locations as $location => $name) {
-            $locations[$location] = array(
+        foreach ( $_locations as $location => $name ) {
+            $locations[ $location ] = array(
                 'location' => $location,
                 'name'     => $name,
                 'meta'     => array(
@@ -88,17 +88,17 @@ class B3_Menu extends B3_API {
                     ),
                 ),
             );
-        }
 
-        if (!empty( $context )) {
-            $menu_locations = get_nav_menu_locations();
-            $menu_id        = isset( $menu_locations[$context] )
-                            ? $menu_locations[$context]
-                            : false;
+            if ( ! empty( $context ) ) {
+                $menu_locations = get_nav_menu_locations();
+                $menu_id        = isset( $menu_locations[ $context ] )
+                                ? $menu_locations[ $context ]
+                                : false;
 
-            if ($menu_id) {
-                $menu = get_term_by( 'id', $menu_id, 'nav_menu' );
-                $locations[$location]['menu'] = $this->prepare_menu( $menu );
+                if ( $menu_id ) {
+                    $menu = get_term_by( 'id', $menu_id, 'nav_menu' );
+                    $locations[ $location ]['menu'] = $this->prepare_menu( $menu );
+                }
             }
         }
 
