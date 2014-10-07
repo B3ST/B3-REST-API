@@ -323,7 +323,7 @@ class B3_RoutesHelper {
 	protected function unfold_tokens() {
 		foreach ($this->routes as $route => $resource) {
 			$tokens = array();
-			preg_match_all( '#:([^/:*()]+)#', $route, $tokens );
+			preg_match_all( '#[:*]([^/:*()]+)#', $route, $tokens );
 			$resource['tokens']   = $tokens[1];
 			$this->routes[$route] = $resource;
 		}
