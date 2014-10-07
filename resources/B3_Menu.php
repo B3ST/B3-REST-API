@@ -51,14 +51,13 @@ class B3_Menu extends B3_API {
      *
      * @return array|WP_Error           Menu entity.
      */
-    public function get_menu ( $location, $context = 'single' ) {
+    public function get_menu( $location, $context = 'single' ) {
 
         $menus = get_registered_nav_menus();
 
         if ( ! isset( $menus[ $location ] ) ) {
-            return new WP_Error( 'json_menu_invalid_id',
-                __( 'Invalid menu location.', 'b3-rest-api' ),
-                array( 'status' => 404 ) );
+            return B3_JSON_REST_API::error( 'json_menu_invalid_id',
+                __( 'Invalid menu location.', 'b3-rest-api' ), 404 );
         }
 
         $menus = $this->prepare_location( array( $location => $menus[ $location ] ), $location );
@@ -73,7 +72,7 @@ class B3_Menu extends B3_API {
      * @param  string $context    The context for the prepared menu. (single|collection)
      * @return array              Menu location entity data.
      */
-    protected function prepare_location ( $_locations, $context = null ) {
+    protected function prepare_location( $_locations, $context = null ) {
 
         $locations = array();
 

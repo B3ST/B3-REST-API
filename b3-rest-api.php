@@ -143,7 +143,18 @@ class B3_JSON_REST_API {
 		foreach ($post_types as $type) {
 			add_filter( "json_prepare_{$type}", array( $this->resources['B3_Post'], 'json_prepare_post' ), 10, 3 );
 		}
+	}
 
+	/**
+	 * Generates a REST API error.
+	 *
+	 * @param  string   $code    Error code.
+	 * @param  string   $message Error message.
+	 * @param  int      $status  HTTP status code (default: 500).
+	 * @return WP_Error          Error object.
+	 */
+	public static function error( $code, $message, $status = 500 ) {
+		return new WP_Error( $code, $message, array( 'status' => $status ) );
 	}
 
 }

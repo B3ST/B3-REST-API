@@ -19,7 +19,7 @@ class B3_Comment extends B3_API {
 	 * @param  array $routes API routes.
 	 * @return array         Changed API routes.
 	 */
-	public function register_routes ( $routes ) {
+	public function register_routes( $routes ) {
 
 		$comment_routes = array(
 			'/(posts|pages)/(?P<id>\d+)/b3:replies' => array(
@@ -45,24 +45,21 @@ class B3_Comment extends B3_API {
 	/**
 	 * Retrieve all responses to a post.
 	 *
-	 * @param  int   $post_id Post ID to retrieve comments for.
-	 * @return array          List of Comment entities.
+	 * @param  int   $id Post ID to retrieve comments for.
+	 * @return array     List of Comment entities.
 	 */
-	public function get_post_replies ( $id ) {
-		global $wp_json_posts;
+	public function get_post_replies( $id ) {
 
 		$post = get_post( $id, ARRAY_A );
 
 		if (empty( $post['ID'] )) {
-			return new WP_Error( 'json_post_invalid_id',
-				__( 'Invalid post ID.', 'b3-rest-api' ),
-				array( 'status' => 404 ) );
+			return B3_JSON_REST_API::error( 'json_post_invalid_id',
+				__( 'Invalid post ID.', 'b3-rest-api' ), 404 );
 		}
 
 		if (!$this->check_read_permission( $post )) {
-			return new WP_Error( 'json_user_cannot_read',
-				__( 'Sorry, you cannot read this post.', 'b3-rest-api' ),
-				array( 'status' => 401 ) );
+			return B3_JSON_REST_API::error( 'json_user_cannot_read',
+				__( 'Sorry, you cannot read this post.', 'b3-rest-api' ), 401 );
 		}
 
 		$comments = get_comments( array( 'post_id' => $id ) );
@@ -83,8 +80,7 @@ class B3_Comment extends B3_API {
 	 * @param  array  $data New comment data.
 	 * @return array        Comment entity for the new comment.
 	 */
-	public function new_post_reply ( $id, $data ) {
-		global $wp_json_posts;
+	public function new_post_reply( $id, $data ) {
 
 		$post = get_post( $id, ARRAY_A );
 
@@ -97,9 +93,8 @@ class B3_Comment extends B3_API {
 		$comment_ID  = wp_new_comment( $new_comment );
 
 		if (!$comment_ID) {
-			return new WP_Error( 'json_insert_error',
-				__( 'There was an error processing your comment.', 'b3-rest-api' ),
-				array( 'status' => 500 ) );
+			return B3_JSON_REST_API::error( 'json_insert_error',
+				__( 'There was an error processing your comment.', 'b3-rest-api' ), 500 );
 		}
 
 		return $this->get_comment( $comment_ID );
@@ -111,23 +106,20 @@ class B3_Comment extends B3_API {
 	 * @param  int   $id Comment ID.
 	 * @return array     Comment entity.
 	 */
-	public function get_comment ( $id ) {
-		global $wp_json_posts;
+	public function get_comment( $id ) {
 
 		$comment = get_comment( $id );
 
 		if (empty( $comment->comment_ID )) {
-			return new WP_Error( 'json_comment_invalid_id',
-				__( 'Invalid comment ID.', 'b3-rest-api' ),
-				array( 'status' => 404 ) );
+			return B3_JSON_REST_API::error( 'json_comment_invalid_id',
+				__( 'Invalid comment ID.', 'b3-rest-api' ), 404 );
 		}
 
 		$post = get_post( $comment->comment_post_ID, ARRAY_A );
 
 		if (!$this->check_read_permission( $post )) {
-			return new WP_Error( 'json_user_cannot_read',
-				__( 'Sorry, you cannot read replies to this post.', 'b3-rest-api' ),
-				array( 'status' => 403 ) );
+			return B3_JSON_REST_API::error( 'json_user_cannot_read',
+				__( 'Sorry, you cannot read replies to this post.', 'b3-rest-api' ), 403 );
 		}
 
 		return $this->prepare_comment( $comment, array( 'comment', 'meta' ), 'single' );
@@ -143,9 +135,8 @@ class B3_Comment extends B3_API {
 	 * @todo
 	 */
 	public function update_comment ( $id, $data ) {
-		return new WP_Error( 'json_not_implemented',
-			__( 'Not yet implemented.', 'b3-rest-api' ),
-			array( 'status' => 501 ) );
+		return B3_JSON_REST_API::error( 'json_not_implemented',
+			__( 'Not yet implemented.', 'b3-rest-api' ), 501 );
 	}
 
 	/**
@@ -157,9 +148,8 @@ class B3_Comment extends B3_API {
 	 * @todo
 	 */
 	public function delete_comment ( $id ) {
-		return new WP_Error( 'json_not_implemented',
-			__( 'Not yet implemented.', 'b3-rest-api' ),
-			array( 'status' => 501 ) );
+		return B3_JSON_REST_API::error( 'json_not_implemented',
+			__( 'Not yet implemented.', 'b3-rest-api' ), 501 );
 	}
 
 	/**
@@ -169,23 +159,20 @@ class B3_Comment extends B3_API {
 	 *                           replies are being retrieved.
 	 * @return array             Collection of Comment entities.
 	 */
-	public function get_comment_replies ( $id ) {
-		global $wp_json_posts;
+	public function get_comment_replies( $id ) {
 
 		$comment = get_comment( $id );
 
-		if (empty( $comment->comment_ID )) {
-			return new WP_Error( 'json_comment_invalid_id',
-				__( 'Invalid comment ID.', 'b3-rest-api' ),
-				array( 'status' => 404 ) );
+		if ( empty( $comment->comment_ID ) ) {
+			return B3_JSON_REST_API::error( 'json_comment_invalid_id',
+				__( 'Invalid comment ID.', 'b3-rest-api' ), 404 );
 		}
 
 		$post = get_post( $comment->comment_post_ID, ARRAY_A );
 
-		if (!$this->check_read_permission( $post )) {
-			return new WP_Error( 'json_user_cannot_read',
-				__( 'Sorry, you cannot read this post.', 'b3-rest-api' ),
-				array( 'status' => 401 ) );
+		if ( ! $this->check_read_permission( $post ) ) {
+			return B3_JSON_REST_API::error( 'json_user_cannot_read',
+				__( 'Sorry, you cannot read this post.', 'b3-rest-api' ), 401 );
 		}
 
 		$comments = get_comments( array( 'parent' => $id ) );
@@ -202,19 +189,17 @@ class B3_Comment extends B3_API {
 	/**
 	 * Add a reply to a comment.
 	 *
-	 * @param  int    id    Unique ID for the comment being replied to.
+	 * @param  int    $id   Unique ID for the comment being replied to.
 	 * @param  array  $data Comment data.
 	 * @return array        The newly created comment entity.
 	 */
-	public function new_comment_reply ( $id, $data ) {
-		global $wp_json_posts;
+	public function new_comment_reply( $id, $data ) {
 
 		$comment = get_comment( $id );
 
 		if (empty( $comment->comment_ID )) {
-			return new WP_Error( 'json_comment_invalid_id',
-				__( 'Invalid comment ID.', 'b3-rest-api' ),
-				array( 'status' => 404 ) );
+			return B3_JSON_REST_API::error( 'json_comment_invalid_id',
+				__( 'Invalid comment ID.', 'b3-rest-api' ), 404 );
 		}
 
 		$post = get_post( $comment->comment_post_ID, ARRAY_A );
@@ -228,9 +213,8 @@ class B3_Comment extends B3_API {
 		$comment_ID  = wp_new_comment( $new_comment );
 
 		if (!$comment_ID) {
-			return new WP_Error( 'json_insert_error',
-				__( 'There was an error processing your comment.', 'b3-rest-api' ),
-				array( 'status' => 500 ) );
+			return B3_JSON_REST_API::error( 'json_insert_error',
+				__( 'There was an error processing your comment.', 'b3-rest-api' ), 500 );
 		}
 
 		return $this->get_comment( $comment_ID );
@@ -257,10 +241,10 @@ class B3_Comment extends B3_API {
 		}
 
 		// Can we read the parent if we're inheriting?
-		if ('inherit' === $post['post_status'] && $post['post_parent'] > 0) {
+		if ( 'inherit' === $post['post_status'] && $post['post_parent'] > 0 ) {
 			$parent = get_post( $post['post_parent'], ARRAY_A );
 
-			if ($this->check_read_permission( $parent )) {
+			if ( $this->check_read_permission( $parent ) ) {
 				return true;
 			}
 		}
@@ -314,7 +298,7 @@ class B3_Comment extends B3_API {
 	/**
 	 * Prepare Comment entity for returning.
 	 *
-	 * @param  array  $comment          Raw comment data.
+	 * @param  object $comment          Raw comment data.
 	 * @param  array  $requested_fields Fields to include.
 	 * @param  string $context          Request context. (single|collection)
 	 * @return array                    Prepared comment entity.
@@ -329,23 +313,7 @@ class B3_Comment extends B3_API {
 		$fields['content'] = apply_filters( 'comment_text', $comment->comment_content, $comment );
 
 		// Status
-		switch ($comment->comment_approved) {
-			case 'hold':
-			case '0':
-				$fields['status'] = 'hold';
-				break;
-
-			case 'approve':
-			case '1':
-				$fields['status'] = 'approved';
-				break;
-
-			case 'spam':
-			case 'trash':
-			default:
-				$fields['status'] = $comment->comment_approved;
-				break;
-		}
+		$fields['status'] = $this->get_comment_status( $comment );
 
 		// Type
 		$fields['type'] = apply_filters( 'get_comment_type', $comment->comment_type );
@@ -358,23 +326,7 @@ class B3_Comment extends B3_API {
 		$fields['parent'] = (int) $comment->comment_parent;
 
 		// Author
-		if ((int) $comment->user_id !== 0) {
-			$user = get_user_by( 'id', $comment->user_id );
-
-			$fields['author'] = array(
-				'ID'     => (int) $user->ID,
-				'name'   => $user->display_name,
-				'URL'    => $user->user_url,
-				'avatar' => json_get_avatar_url( $user->user_email ),
-			);
-		} else {
-			$fields['author'] = array(
-				'ID'     => 0,
-				'name'   => $comment->comment_author,
-				'URL'    => $comment->comment_author_url,
-				'avatar' => json_get_avatar_url( $comment->comment_author_email ),
-			);
-		}
+		$fields['author'] = $this->get_comment_author( $comment );
 
 		// Date
 		$timezone = json_get_timezone();
@@ -384,21 +336,6 @@ class B3_Comment extends B3_API {
 		$fields['date_tz']  = $date->format( 'e' );
 		$fields['date_gmt'] = date( 'c', strtotime( $comment->comment_date_gmt ) );
 
-		// Meta
-		$meta = array(
-			'links' => array(
-				'up' => json_url( sprintf( '/posts/%d', (int) $comment->comment_post_ID ) )
-			),
-		);
-
-		if (0 !== (int) $comment->comment_parent) {
-			$meta['links']['in-reply-to'] = json_url( sprintf( '/b3:comments/%d', (int) $comment->comment_parent ) );
-		}
-
-		if ('single' !== $context) {
-			$meta['links']['self'] = json_url( sprintf( '/b3:comments/%d', (int) $comment->comment_ID ) );
-		}
-
 		// Remove unneeded fields
 		$data = array();
 
@@ -407,10 +344,94 @@ class B3_Comment extends B3_API {
 		}
 
 		if (in_array( 'meta', $requested_fields )) {
-			$data['meta'] = $meta;
+			$data['meta'] = $this->prepare_comment_meta( $comment, $context );
 		}
 
 		return apply_filters( 'b3_prepare_comment', $data, $comment, $context );
+	}
+
+	/**
+	 * Get comment status.
+	 *
+	 * @param  object $comment Raw comment data.
+	 * @return string          Comment status.
+	 */
+	protected function get_comment_status( $comment ) {
+
+		switch ($comment->comment_approved) {
+			case 'hold':
+			case '0':
+				$status = 'hold';
+				break;
+
+			case 'approve':
+			case '1':
+				$status = 'approved';
+				break;
+
+			case 'spam':
+			case 'trash':
+			default:
+				$status = $comment->comment_approved;
+				break;
+		}
+
+		return $status;
+	}
+
+	/**
+	 * Get comment author.
+	 *
+	 * @param  object $comment Raw comment data.
+	 * @return array           Comment author data.
+	 */
+	protected function get_comment_author( $comment ) {
+
+		if ((int) $comment->user_id > 0) {
+			$user = get_user_by( 'id', $comment->user_id );
+
+			if ( ! empty( $user ) && ! is_wp_error( $user ) ) {
+				return array(
+					'ID'     => (int) $user->ID,
+					'name'   => $user->display_name,
+					'URL'    => $user->user_url,
+					'avatar' => json_get_avatar_url( $user->user_email ),
+				);
+			}
+		}
+
+		return array(
+			'ID'     => 0,
+			'name'   => $comment->comment_author,
+			'URL'    => $comment->comment_author_url,
+			'avatar' => json_get_avatar_url( $comment->comment_author_email ),
+		);
+	}
+
+	/**
+	 * Prepare comment meta object.
+	 *
+	 * @param  object $comment Raw comment data.
+	 * @param  string $context Request context. (single|collection)
+	 * @return array           Comment meta data.
+	 */
+	protected function prepare_comment_meta( $comment, $context = 'single' ) {
+
+		$meta = array(
+			'links' => array(
+				'up' => json_url( sprintf( '/posts/%d', (int) $comment->comment_post_ID ) ),
+			),
+		);
+
+		if ( 0 !== (int) $comment->comment_parent ) {
+			$meta['links']['in-reply-to'] = json_url( sprintf( '/b3:comments/%d', (int) $comment->comment_parent ) );
+		}
+
+		if ( 'single' !== $context ) {
+			$meta['links']['self'] = json_url( sprintf( '/b3:comments/%d', (int) $comment->comment_ID ) );
+		}
+
+		return $meta;
 	}
 
 	/**
@@ -427,21 +448,18 @@ class B3_Comment extends B3_API {
 	protected function prepare_new_comment( $data, $post, $comment = null ) {
 
 		if ( empty( $post['ID'] ) ) {
-			return new WP_Error( 'json_post_invalid_id',
-				__( 'Invalid post ID.', 'b3-rest-api' ),
-				array( 'status' => 404 ) );
+			return B3_JSON_REST_API::error( 'json_post_invalid_id',
+				__( 'Invalid post ID.', 'b3-rest-api' ), 404 );
 		}
 
 		if ( ! $this->check_read_permission( $post ) ) {
-			return new WP_Error( 'json_user_cannot_read',
-				__( 'Sorry, you cannot read replies to this post.', 'b3-rest-api' ),
-				array( 'status' => 403 ) );
+			return B3_JSON_REST_API::error( 'json_user_cannot_read',
+				__( 'Sorry, you cannot read replies to this post.', 'b3-rest-api' ), 403 );
 		}
 
 		if ( ! $this->check_reply_permission( $post ) ) {
-			return new WP_Error( 'json_user_cannot_reply',
-				__( 'Sorry, you cannot reply to this post.', 'b3-rest-api' ),
-				array( 'status' => 403 ) );
+			return B3_JSON_REST_API::error( 'json_user_cannot_reply',
+				__( 'Sorry, you cannot reply to this post.', 'b3-rest-api' ), 403 );
 		}
 
 		$new_comment = array(
@@ -481,22 +499,19 @@ class B3_Comment extends B3_API {
 	protected function validate_comment( $comment ) {
 		if ( get_option( 'require_name_email' ) ) {
 			if ( empty( $comment['comment_author_email'] ) || '' == $comment['comment_author'] ) {
-				return new WP_Error( 'json_bad_comment',
-					__( 'Comment author name and email are required.', 'b3-rest-api' ),
-					array( 'status' => 400 ) );
+				return B3_JSON_REST_API::error( 'json_bad_comment',
+					__( 'Comment author name and email are required.', 'b3-rest-api' ), 400 );
 			}
 
 			if ( ! is_email( $comment['comment_author_email'] ) ) {
-				return new WP_Error( 'json_bad_comment',
-					__( 'A valid email address is required.', 'b3-rest-api' ),
-					array( 'status' => 400 ) );
+				return B3_JSON_REST_API::error( 'json_bad_comment',
+					__( 'A valid email address is required.', 'b3-rest-api' ), 400 );
 			}
 		}
 
 		if ( empty( $comment['comment_content'] ) ) {
-			return new WP_Error( 'json_bad_comment',
-				__( 'Your comment must not be empty.', 'b3-rest-api' ),
-				array( 'status' => 400 ) );
+			return B3_JSON_REST_API::error( 'json_bad_comment',
+				__( 'Your comment must not be empty.', 'b3-rest-api' ), 400 );
 		}
 
 		return $comment;
