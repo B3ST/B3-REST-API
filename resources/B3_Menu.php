@@ -46,9 +46,10 @@ class B3_Menu extends B3_API {
     /**
      * Retrieve a menu by location index.
      *
-     * @param  mixed  $location Menu location to retrieve.
-     * @param  string $context  Context in which the menu appears.
-     * @return array            Menu entity.
+     * @param  mixed          $location Menu location to retrieve.
+     * @param  string         $context  Context in which the menu appears.
+     *
+     * @return array|WP_Error           Menu entity.
      */
     public function get_menu ( $location, $context = 'single' ) {
 
