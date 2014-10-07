@@ -325,8 +325,6 @@ class B3_Comment extends B3_API {
 			'post' => (int) $comment->comment_post_ID,
 		);
 
-		$post = (array) get_post( $fields['post'] );
-
 		// Content
 		$fields['content'] = apply_filters( 'comment_text', $comment->comment_content, $comment );
 

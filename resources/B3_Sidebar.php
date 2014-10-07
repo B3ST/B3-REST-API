@@ -55,13 +55,13 @@ class B3_Sidebar extends B3_API {
     public function get_sidebar ( $index, $context = 'single' ) {
         global $wp_registered_sidebars, $wp_registered_widgets;
 
-        if (!is_active_sidebar( $index )) {
+        if ( ! is_active_sidebar( $index ) ) {
             return new WP_Error( 'json_sidebar_invalid_id',
                 __( 'Sidebar is not active.', 'b3-rest-api' ),
                 array( 'status' => 404 ) );
         }
 
-        if (!is_dynamic_sidebar( $index )) {
+        if ( ! is_dynamic_sidebar( $index ) ) {
             return new WP_Error( 'json_sidebar_invalid_id',
                 __( 'Sidebar has no active widgets.', 'b3-rest-api' ),
                 array( 'status' => 404 ) );
@@ -159,7 +159,7 @@ class B3_Sidebar extends B3_API {
             );
         }
 
-        if ( ! empty( $single_id ) && 'single' === $context ) {
+        if ( 'single' === $context ) {
             $sidebars = $sidebars[ $single_id ];
         }
 
