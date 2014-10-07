@@ -134,32 +134,33 @@ class B3_Sidebar extends B3_API {
      */
     protected function prepare_sidebar ( $_sidebars, $context = 'single' ) {
 
-        $keys = array( 'name', 'id', 'description', 'class', 'meta' );
+        $single_id = 0;
+        $keys      = array( 'name', 'id', 'description', 'class', 'meta' );
 
-        if ('single' === $context) {
-            $id = $_sidebars['id'];
-            $_sidebars = array( $id => $_sidebars );
-            $keys[] = 'widgets';
+        if ( 'single' === $context ) {
+            $single_id = $_sidebars['id'];
+            $_sidebars = array( $single_id => $_sidebars );
+            $keys[]    = 'widgets';
         }
 
         $sidebars = array();
 
-        foreach ($_sidebars as $index => $sidebar) {
+        foreach ( $_sidebars as $index => $sidebar ) {
             foreach ($keys as $key) {
-                if (isset( $sidebar[$key] )) {
-                    $sidebars[$index][$key] = $sidebar[$key];
+                if (isset( $sidebar[ $key ] )) {
+                    $sidebars[ $index ][ $key ] = $sidebar[ $key ];
                 }
             }
 
-            $sidebars[$index]['meta'] = array(
+            $sidebars[ $index ]['meta'] = array(
                 'links' => array(
                     'self' => json_url( sprintf( '/b3:sidebars/%s', $index ) ),
                 ),
             );
         }
 
-        if ('single' === $context) {
-            $sidebars = $sidebars[$id];
+        if ( ! empty( $single_id ) && 'single' === $context ) {
+            $sidebars = $sidebars[ $single_id ];
         }
 
         return apply_filters( 'b3_sidebars', $sidebars, $_sidebars, $context );

@@ -15,14 +15,14 @@ class B3_Settings extends B3_API {
 
     /**
      * Settings object.
-     * @var B3_WPSettings
+     * @var B3_SettingsHelper
      */
     protected $settings;
 
     /**
      * Options returned by the endpoint.
      * @var array
-     * @see B3_WPSettings::__get()
+     * @see B3_SettingsHelper::__get()
      */
     protected $options = array(
         'name',
