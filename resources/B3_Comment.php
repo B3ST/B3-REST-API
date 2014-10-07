@@ -471,23 +471,35 @@ class B3_Comment extends B3_API {
 			'comment_author_url'   => isset( $data['author']['URL']   ) ? $data['author']['URL']   : null,
 		);
 
-		if (!empty( $comment )) {
+		if ( ! empty( $comment ) ) {
 			$new_comment['comment_parent'] = $comment->comment_ID;
 		}
 
+		$new_comment = $this->prepare_new_comment_author( $new_comment );
+
+		return $this->validate_comment( $new_comment );
+	}
+
+	/**
+	 * Populate comment with data from the currently logged in user.
+	 *
+	 * @param  array $comment New comment data.
+	 * @return array          New comment data with author information.
+	 */
+	protected function prepare_new_comment_author( $comment ) {
 		if ( is_user_logged_in() ) {
 			$user = wp_get_current_user();
 
 			if ( $user && $user->ID ) {
-				$new_comment['user_ID']              = $user->ID;
-				$new_comment['user_id']              = $user->ID;
-				$new_comment['comment_author']       = $user->display_name;
-				$new_comment['comment_author_email'] = $user->user_email;
-				$new_comment['comment_author_url']   = $user->user_url;
+				$comment['user_ID']              = $user->ID;
+				$comment['user_id']              = $user->ID;
+				$comment['comment_author']       = $user->display_name;
+				$comment['comment_author_email'] = $user->user_email;
+				$comment['comment_author_url']   = $user->user_url;
 			}
 		}
 
-		return $this->validate_comment( $new_comment );
+		return $comment;
 	}
 
 	/**
