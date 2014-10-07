@@ -100,7 +100,7 @@ class B3_RoutesHelper {
 	 */
 	protected function prepare_route( $route ) {
 		// Rewrite tokens:
-		$route = preg_replace_callback( '/%([^%]+)%/', array( $this, 'prepare_route_callback' ), $route );
+		$route = preg_replace_callback( '/%([^%]+)%/', array( $this, 'prepare_route_replace' ), $route );
 
 		// Trim leading and trailing slashes:
 		$route = preg_replace( '#^/|/$#', '', $route );
@@ -109,11 +109,16 @@ class B3_RoutesHelper {
 	}
 
 	/**
-	 * [prepare_route_callback description]
-	 * @param  [type] $matches [description]
-	 * @return [type]          [description]
+	 * Replace route part with the appropriate token.
+	 *
+	 * Determines whether a post type or taxonomy is hierarchical
+	 * in order to write route part token as a splat.
+	 *
+	 * @param  array  $matches Regular expression matches.
+	 *
+	 * @return string          Replacement string.
 	 */
-	protected function prepare_route_callback ( $matches ) {
+	protected function prepare_route_replace( $matches ) {
 		$part         = $matches[1];
 		$hierarchical = is_post_type_hierarchical( $part ) || is_taxonomy_hierarchical( $part );
 		$prefix       = $hierarchical ? '*' : ':';
@@ -122,9 +127,11 @@ class B3_RoutesHelper {
 	}
 
 	/**
-	 * [get_paginated_route description]
-	 * @param  string $route [description]
-	 * @return string        [description]
+	 * Append optional pagination part to a route.
+	 *
+	 * @param  string $route Route string.
+	 *
+	 * @return string        Route string with page part.
 	 */
 	protected function get_paginated_route( $route = '' ) {
 		if (empty( $route )) {
@@ -149,7 +156,7 @@ class B3_RoutesHelper {
 	 *                         - B3_EP_COMMENTS
 	 *                         - B3_EP_ALL
 	 */
-	protected function add_routes ( $route, $resource, $mask = B3_EP_NONE ) {
+	protected function add_routes( $route, $resource, $mask = B3_EP_NONE ) {
 		$routes = array();
 		$route  = $this->prepare_route( $route );
 
@@ -183,7 +190,7 @@ class B3_RoutesHelper {
 	 *
 	 * Paged results are added.
 	 */
-	protected function add_root_routes () {
+	protected function add_root_routes() {
 		$resource  = array( 'object' => 'archive', 'type' => 'root' );
 		$this->add_routes( '', $resource, B3_EP_PAGE | B3_EP_ATTACHMENT );
 	}
@@ -194,8 +201,8 @@ class B3_RoutesHelper {
 	 * This will include routes for multiple pages, comments and page
 	 * attachments (and their comments).
 	 */
-	protected function add_post_routes () {
-		$resource = array( 'object' => 'post', 'type' => 'post' );
+	protected function add_post_routes() {
+		$resource    = array( 'object' => 'post', 'type' => 'post' );
 		$permastruct = get_option( 'permalink_structure' );
 		$permastruct = preg_replace( '/%postname%/', '%post%', $permastruct );
 		$this->add_routes( $permastruct, $resource, B3_EP_ALL );
@@ -207,9 +214,9 @@ class B3_RoutesHelper {
 	 * This will include routes for multiple pages, comments and page
 	 * attachments (and their comments).
 	 */
-	protected function add_page_routes () {
+	protected function add_page_routes() {
 		global $wp_rewrite;
-		$resource = array( 'object' => 'post', 'type' => 'page' );
+		$resource    = array( 'object' => 'post', 'type' => 'page' );
 		$permastruct = $wp_rewrite->get_page_permastruct();
 		$permastruct = preg_replace( '/%pagename%/', '%page%', $permastruct );
 		$this->add_routes( $permastruct, $resource, B3_EP_ALL );
@@ -220,7 +227,7 @@ class B3_RoutesHelper {
 	 *
 	 * This will include routes for paged results.
 	 */
-	protected function add_author_routes () {
+	protected function add_author_routes() {
 		global $wp_rewrite;
 		$resource = array( 'object' => 'author', 'type' => 'author' );
 		$this->add_routes( $wp_rewrite->get_author_permastruct(), $resource, B3_EP_PAGE );
@@ -231,7 +238,7 @@ class B3_RoutesHelper {
 	 *
 	 * This will include routes for paged results.
 	 */
-	protected function add_date_routes () {
+	protected function add_date_routes() {
 		global $wp_rewrite;
 		$resource = array( 'object' => 'archive', 'type' => 'date' );
 		$this->add_routes( $wp_rewrite->get_date_permastruct(), $resource, B3_EP_PAGE );
@@ -244,7 +251,7 @@ class B3_RoutesHelper {
 	 *
 	 * This will include routes for paged results.
 	 */
-	protected function add_search_routes () {
+	protected function add_search_routes() {
 		global $wp_rewrite;
 		$resource = array( 'object' => 'archive', 'type' => 'search' );
 		$this->add_routes( $wp_rewrite->get_search_permastruct(), $resource, B3_EP_PAGE );
@@ -264,7 +271,7 @@ class B3_RoutesHelper {
 	 * - `post-type/:post-type/comments`
 	 * - `post-type/:post-type/attachment/:attachment`
 	 */
-	protected function add_post_type_routes () {
+	protected function add_post_type_routes() {
 		global $wp_rewrite;
 
 		$post_types = get_post_types( array( 'show_in_json' => true ) );
@@ -298,7 +305,7 @@ class B3_RoutesHelper {
 	 * - `custom-taxonomy/:custom-taxonomy`
 	 * - `custom-taxonomy/:custom-taxonomy/page/:page`
 	 */
-	protected function add_taxonomy_routes () {
+	protected function add_taxonomy_routes() {
 		global $wp_rewrite;
 
 		$taxonomies = get_taxonomies( array( 'public' => true ) );
@@ -313,7 +320,7 @@ class B3_RoutesHelper {
 	/**
 	 * Extract tokens from routes and include them as resource data.
 	 */
-	protected function unfold_tokens () {
+	protected function unfold_tokens() {
 		foreach ($this->routes as $route => $resource) {
 			$tokens = array();
 			preg_match_all( '#:([^/:*()]+)#', $route, $tokens );
