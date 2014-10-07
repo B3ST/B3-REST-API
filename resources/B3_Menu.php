@@ -90,9 +90,7 @@ class B3_Menu extends B3_API {
 
             if ( ! empty( $context ) ) {
                 $menu_locations = get_nav_menu_locations();
-                $menu_id        = isset( $menu_locations[ $context ] )
-                                ? $menu_locations[ $context ]
-                                : false;
+                $menu_id        = ifsetor( $menu_locations[ $context ], false );
 
                 if ( $menu_id ) {
                     $menu = get_term_by( 'id', $menu_id, 'nav_menu' );

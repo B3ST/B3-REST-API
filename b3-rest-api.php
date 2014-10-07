@@ -30,6 +30,7 @@ if ( ! defined('WPINC') ) {
 	die;
 }
 
+require_once dirname(__FILE__) . '/functions.php';
 require_once dirname(__FILE__) . '/resources/B3_API.php';
 require_once dirname(__FILE__) . '/helpers/B3_RoutesHelper.php';
 require_once dirname(__FILE__) . '/helpers/B3_SettingsHelper.php';

@@ -71,8 +71,10 @@ class B3_Sidebar extends B3_API {
 
         $widgets = array();
 
-        foreach ((array) $sidebars_widgets[$index] as $id) {
-            if (!isset( $wp_registered_widgets[$id] )) continue;
+        foreach ( (array) $sidebars_widgets[ $index ] as $id ) {
+            if ( ! isset( $wp_registered_widgets[ $id ] ) ) {
+              continue;
+            }
 
             $callback    = $wp_registered_widgets[$id]['callback'];
             $option_name = $callback[0]->option_name;
@@ -87,14 +89,14 @@ class B3_Sidebar extends B3_API {
 
             $params = array_merge(
                 array( array_merge( $sidebar, $widget ) ),
-                (array) $wp_registered_widgets[$id]['params']
+                (array) $wp_registered_widgets[ $id ]['params']
             );
 
             $classes = array();
-            foreach ((array) $wp_registered_widgets[$id]['classname'] as $cn) {
-                if (is_string( $cn ))
+            foreach ( (array) $wp_registered_widgets[ $id ]['classname'] as $cn ) {
+                if ( is_string( $cn ) )
                     $cn = '_' . $cn;
-                elseif (is_object( $cn ))
+                elseif ( is_object( $cn ) )
                     $cn = '_' . get_class( $cn );
 
                 $classes[] = ltrim( $cn, '_' );

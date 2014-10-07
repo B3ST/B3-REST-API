@@ -358,7 +358,7 @@ class B3_Comment extends B3_API {
 	 */
 	protected function get_comment_status( $comment ) {
 
-		switch ($comment->comment_approved) {
+		switch ( $comment->comment_approved ) {
 			case 'hold':
 			case '0':
 				$status = 'hold';
@@ -369,8 +369,6 @@ class B3_Comment extends B3_API {
 				$status = 'approved';
 				break;
 
-			case 'spam':
-			case 'trash':
 			default:
 				$status = $comment->comment_approved;
 				break;
@@ -464,11 +462,11 @@ class B3_Comment extends B3_API {
 
 		$new_comment = array(
 			'comment_post_ID'      => $post['ID'],
-			'comment_parent'       => isset( $data['parent_comment']  ) ? $data['parent_comment']  : null,
-			'comment_content'      => isset( $data['content']         ) ? $data['content']         : null,
-			'comment_author'       => isset( $data['author']['name']  ) ? $data['author']['name']  : null,
-			'comment_author_email' => isset( $data['author']['email'] ) ? $data['author']['email'] : null,
-			'comment_author_url'   => isset( $data['author']['URL']   ) ? $data['author']['URL']   : null,
+			'comment_parent'       => ifsetor( $data['parent_comment'] ),
+			'comment_content'      => ifsetor( $data['content'] ),
+			'comment_author'       => ifsetor( $data['author']['name'] ),
+			'comment_author_email' => ifsetor( $data['author']['email'] ),
+			'comment_author_url'   => ifsetor( $data['author']['URL'] ),
 		);
 
 		if ( ! empty( $comment ) ) {
