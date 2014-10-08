@@ -7,15 +7,15 @@
  * @subpackage B3/API
  */
 
-if ( ! defined('WPINC') ) {
+if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define('B3_EP_NONE', 0);
-define('B3_EP_PAGE', 1);
-define('B3_EP_ATTACHMENT', 2);
-define('B3_EP_COMMENTS', 4);
-define('B3_EP_ALL', B3_EP_PAGE | B3_EP_ATTACHMENT | B3_EP_COMMENTS);
+define( 'B3_EP_NONE',       0 );
+define( 'B3_EP_PAGE',       1 );
+define( 'B3_EP_ATTACHMENT', 2 );
+define( 'B3_EP_COMMENTS',   4 );
+define( 'B3_EP_ALL',        B3_EP_PAGE | B3_EP_ATTACHMENT | B3_EP_COMMENTS );
 
 /**
  * Prepares WordPress rewrite rules for presentation.
@@ -77,7 +77,7 @@ class B3_RoutesHelper {
 	 *
 	 * @return array WordPress routes.
 	 */
-	public function get_routes () {
+	public function get_routes() {
 		/**
 		 * Allows developers to alter the list of resource routes sent
 		 * to the client frontend.
@@ -134,7 +134,7 @@ class B3_RoutesHelper {
 	 * @return string        Route string with page part.
 	 */
 	protected function get_paginated_route( $route = '' ) {
-		if (empty( $route )) {
+		if ( empty( $route ) ) {
 			return sprintf( '(%s)', $this->pagination_base );
 		}
 
@@ -163,22 +163,22 @@ class B3_RoutesHelper {
 		$attachment_route = '';
 		$resource_route   = $this->prepare_route( $this->get_paginated_route( $route ) );
 
-		$routes[$resource_route] = $resource;
+		$routes[ $resource_route ] = $resource;
 
-		if (B3_EP_ATTACHMENT & $mask) {
+		if ( B3_EP_ATTACHMENT & $mask ) {
 			$attachment_route = $this->prepare_route( $route . $this->attachment_base );
-			$routes[$attachment_route] = array( 'object' => 'post', 'type' => 'attachment' );
+			$routes[ $attachment_route ] = array( 'object' => 'post', 'type' => 'attachment' );
 		}
 
-		if (B3_EP_COMMENTS & $mask) {
+		if ( B3_EP_COMMENTS & $mask ) {
 			$comments_resource = array( 'object' => 'comments', 'type' => $resource['type'] );
 			$comments_route = $this->prepare_route( $this->get_paginated_route( $route . $this->comments_base ) );
-			$routes[$comments_route] = $comments_resource;
+			$routes[ $comments_route ] = $comments_resource;
 
-			if ($attachment_route) {
+			if ( $attachment_route ) {
 				$comments_resource = array( 'object' => 'comments', 'type' => 'attachment' );
 				$comments_route = $this->prepare_route( $this->get_paginated_route( $attachment_route . $this->comments_base ) );
-				$routes[$comments_route] = $comments_resource;
+				$routes[ $comments_route ] = $comments_resource;
 			}
 		}
 
@@ -276,17 +276,15 @@ class B3_RoutesHelper {
 
 		$post_types = get_post_types( array( 'show_in_json' => true ) );
 
-		foreach ($post_types as $post_type) {
+		foreach ( $post_types as $post_type ) {
 			$route = $wp_rewrite->get_extra_permastruct( $post_type );
 
-			if (empty( $route )) {
+			if ( empty( $route ) ) {
 				continue;
 			}
 
 			$resource = array( 'object' => 'post', 'type' => $post_type );
-			$mask     = ($post_type === 'attachment')
-					  ? B3_EP_COMMENTS | B3_EP_PAGE
-					  : B3_EP_ALL;
+			$mask     = ($post_type === 'attachment') ? B3_EP_COMMENTS | B3_EP_PAGE : B3_EP_ALL;
 
 			$this->add_routes( $route, $resource, $mask );
 
@@ -310,7 +308,7 @@ class B3_RoutesHelper {
 
 		$taxonomies = get_taxonomies( array( 'public' => true ) );
 
-		foreach ($taxonomies as $taxonomy) {
+		foreach ( $taxonomies as $taxonomy ) {
 			$route    = $wp_rewrite->get_extra_permastruct( $taxonomy );
 			$resource = array( 'object' => 'taxonomy', 'type' => $taxonomy );
 			$this->add_routes( $route, $resource, B3_EP_PAGE );
@@ -321,11 +319,11 @@ class B3_RoutesHelper {
 	 * Extract tokens from routes and include them as resource data.
 	 */
 	protected function unfold_tokens() {
-		foreach ($this->routes as $route => $resource) {
+		foreach ( $this->routes as $route => $resource ) {
 			$tokens = array();
 			preg_match_all( '#[:*]([^/:*()]+)#', $route, $tokens );
-			$resource['tokens']   = $tokens[1];
-			$this->routes[$route] = $resource;
+			$resource['tokens']     = $tokens[1];
+			$this->routes[ $route ] = $resource;
 		}
 	}
 

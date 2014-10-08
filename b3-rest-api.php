@@ -26,14 +26,14 @@
  * GitHub Plugin URI: https://github.com/B3ST/B3-REST-API
  */
 
-if ( ! defined('WPINC') ) {
+if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-require_once dirname(__FILE__) . '/functions.php';
-require_once dirname(__FILE__) . '/resources/B3_API.php';
-require_once dirname(__FILE__) . '/helpers/B3_RoutesHelper.php';
-require_once dirname(__FILE__) . '/helpers/B3_SettingsHelper.php';
+require_once dirname( __FILE__ ) . '/functions.php';
+require_once dirname( __FILE__ ) . '/resources/B3_API.php';
+require_once dirname( __FILE__ ) . '/helpers/B3_RoutesHelper.php';
+require_once dirname( __FILE__ ) . '/helpers/B3_SettingsHelper.php';
 
 class B3_JSON_REST_API {
 
@@ -66,14 +66,14 @@ class B3_JSON_REST_API {
 	/**
 	 * Plugin constructor.
 	 */
-	public function __construct () {
+	public function __construct() {
 
 		$this->resources = array(
-			'B3_Comment'  => NULL,
-			'B3_Menu'     => NULL,
-			'B3_Post'     => NULL,
-			'B3_Settings' => NULL,
-			'B3_Sidebar'  => NULL,
+			'B3_Comment'  => null,
+			'B3_Menu'     => null,
+			'B3_Post'     => null,
+			'B3_Settings' => null,
+			'B3_Sidebar'  => null,
 		);
 
 		add_action( 'init', array( $this, 'init' ), 99 );
@@ -91,7 +91,7 @@ class B3_JSON_REST_API {
 	 */
 	public static function get_instance() {
 
-		if (null == static::$instance) {
+		if ( null === static::$instance ) {
 			static::$instance = new static;
 		}
 
@@ -130,18 +130,20 @@ class B3_JSON_REST_API {
 	 *
 	 * @param  WP_JSON_ResponseHandler $server WP API response handler.
 	 */
-	public function default_filters ( WP_JSON_ResponseHandler $server ) {
+	public function default_filters( WP_JSON_ResponseHandler $server ) {
 		$this->server = $server;
 
-		foreach ($this->resources as $class => $resource) {
-			include_once( dirname( __FILE__ ) . '/resources/' . $class . '.php' );
-			$this->resources[$class] = $resource = new $class( $server );
+		foreach ( $this->resources as $class => $resource ) {
+			include_once dirname( __FILE__ ) . '/resources/' . $class . '.php';
+
+			$this->resources[ $class ] = $resource = new $class( $server );
+
 			add_filter( 'json_endpoints', array( $resource, 'register_routes' ), 10, 1 );
 		}
 
 		$post_types = get_post_types( array( 'show_in_json' => true ) );
 
-		foreach ($post_types as $type) {
+		foreach ( $post_types as $type ) {
 			add_filter( "json_prepare_{$type}", array( $this->resources['B3_Post'], 'json_prepare_post' ), 10, 3 );
 		}
 	}
