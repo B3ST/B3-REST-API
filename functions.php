@@ -1,6 +1,11 @@
 <?php
 
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 if ( ! function_exists( 'ifsetor' ) ) :
+
 	/**
 	 * Returns the value if it exists or a given default value.
 	 *
