@@ -37,7 +37,7 @@ class B3_SettingsHelper {
 
 			case 'site_path':
 				$site_url_components = parse_url( site_url() );
-				return (string) $site_url_components['path'];
+				return (string) isset( $site_url_components['path'] ) ? $site_url_components['path'] : '';
 
 			case 'wp_url':
 				return get_bloginfo( 'wpurl' );
