@@ -22,7 +22,7 @@ class B3_Comment extends B3_API {
 	public function register_routes( $routes ) {
 
 		$comment_routes = array(
-			'/(posts|pages)/(?P<id>\d+)/b3:replies' => array(
+			'/(posts|pages|media)/(?P<id>\d+)/b3:replies' => array(
 				array( array( $this, 'get_post_replies' ), WP_JSON_Server::READABLE ),
 				array( array( $this, 'new_post_reply' ), WP_JSON_Server::CREATABLE | WP_JSON_Server::ACCEPT_JSON ),
 			),

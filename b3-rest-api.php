@@ -70,6 +70,7 @@ class B3_JSON_REST_API {
 
 		$this->resources = array(
 			'B3_Comment'  => null,
+			'B3_Media'    => null,
 			'B3_Menu'     => null,
 			'B3_Post'     => null,
 			'B3_Settings' => null,
