@@ -41,6 +41,12 @@ class B3_Post extends B3_API {
 	public function get_post( $slug, $context = 'view' ) {
 		global $wp_json_posts;
 		$post = get_page_by_path( $slug, OBJECT, get_post_types( array( 'show_in_json' => true ) ) );
+
+		if ( ! $post ) {
+			return B3_JSON_REST_API::error( 'json_post_invalid_slug',
+				__( 'The resource was not found.', 'b3-rest-api' ), 404 );
+		}
+
 		return $wp_json_posts->get_post( $post->ID, $context );
 	}
 
