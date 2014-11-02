@@ -59,9 +59,9 @@ class B3_RoutesHelper {
 		$this->add_root_routes();
 		$this->add_search_routes();
 		$this->add_author_routes();
-		$this->add_post_routes();
 		$this->add_post_type_routes();
 		$this->add_taxonomy_routes();
+		$this->add_post_routes();
 		$this->add_date_routes();
 		$this->add_page_routes();
 
