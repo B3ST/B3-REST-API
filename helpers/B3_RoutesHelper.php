@@ -148,7 +148,7 @@ class B3_RoutesHelper {
 	 * attachment routes are added for the provided resource endpoint.
 	 *
 	 * @param string $route    New base route to add.
-	 * @param string $resource Resource for the route.
+	 * @param array  $resource Resource for the route.
 	 * @param int    $mask     Extra endpoints mask (default B3_EP_NONE)
 	 *                         - B3_EP_NONE
 	 *                         - B3_EP_PAGE

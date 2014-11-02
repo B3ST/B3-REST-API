@@ -16,8 +16,9 @@ class B3_Comment extends B3_API {
 	/**
 	 * Register API routes for the Comment resource.
 	 *
-	 * @param  array $routes API routes.
-	 * @return array         Changed API routes.
+	 * @param array $routes API routes.
+	 *
+	 * @return array Changed API routes.
 	 */
 	public function register_routes( $routes ) {
 
@@ -45,8 +46,9 @@ class B3_Comment extends B3_API {
 	/**
 	 * Retrieve all responses to a post.
 	 *
-	 * @param  int   $id Post ID to retrieve comments for.
-	 * @return array     List of Comment entities.
+	 * @param int $id Post ID to retrieve comments for.
+	 *
+	 * @return array|WP_Error List of Comment entities, or error.
 	 */
 	public function get_post_replies( $id ) {
 
@@ -76,9 +78,10 @@ class B3_Comment extends B3_API {
 	/**
 	 * Add a reply to a post.
 	 *
-	 * @param  int    $id   Post ID to comment on.
-	 * @param  array  $data New comment data.
-	 * @return array        Comment entity for the new comment.
+	 * @param int   $id   Post ID to comment on.
+	 * @param array $data New comment data.
+	 *
+	 * @return array|WP_Error Comment entity for the new comment, or error.
 	 */
 	public function new_post_reply( $id, $data ) {
 
@@ -103,8 +106,9 @@ class B3_Comment extends B3_API {
 	/**
 	 * Retrieve a single comment by ID.
 	 *
-	 * @param  int   $id Comment ID.
-	 * @return array     Comment entity.
+	 * @param int $id Comment ID.
+	 *
+	 * @return array|WP_Error Comment entity, or error.
 	 */
 	public function get_comment( $id ) {
 
@@ -128,9 +132,10 @@ class B3_Comment extends B3_API {
 	/**
 	 * Edit a single comment by ID.
 	 *
-	 * @param  int    $comment_id Comment ID to edit.
-	 * @param  array  $data       Updated comment data.
-	 * @return [type]             [description]
+	 * @param int   $comment_id Comment ID to edit.
+	 * @param array $data       Updated comment data.
+	 *
+	 * @return array|WP_Error Comment update response, or error.
 	 *
 	 * @todo
 	 */
@@ -143,7 +148,8 @@ class B3_Comment extends B3_API {
 	 * Remove a single comment.
 	 *
 	 * @param  int    $comment_id Comment ID to be removed.
-	 * @return [type]             [description]
+	 *
+	 * @return array|WP_Error Comment deletion response or error.
 	 *
 	 * @todo
 	 */
@@ -155,9 +161,10 @@ class B3_Comment extends B3_API {
 	/**
 	 * Retrieve all responses to a comment.
 	 *
-	 * @param  int   $comment_id Unique ID for the comment whose
-	 *                           replies are being retrieved.
-	 * @return array             Collection of Comment entities.
+	 * @param int $comment_id Unique ID for the comment whose replies are
+	 *                        being retrieved.
+	 *
+	 * @return array|WP_Error Collection of Comment entities, or error.
 	 */
 	public function get_comment_replies( $id ) {
 
@@ -189,9 +196,10 @@ class B3_Comment extends B3_API {
 	/**
 	 * Add a reply to a comment.
 	 *
-	 * @param  int    $id   Unique ID for the comment being replied to.
-	 * @param  array  $data Comment data.
-	 * @return array        The newly created comment entity.
+	 * @param int   $id   Unique ID for the comment being replied to.
+	 * @param array $data Comment data.
+	 *
+	 * @return array The newly created comment entity.
 	 */
 	public function new_comment_reply( $id, $data ) {
 
@@ -223,9 +231,9 @@ class B3_Comment extends B3_API {
 	/**
 	 * Check if the current user is allowed to read a post.
 	 *
-	 * @param  array   $post Post data.
-	 * @return boolean       Whether the current user is allowed to
-	 *                       read this post.
+	 * @param array $post Post data.
+	 *
+	 * @return boolean Whether the current user is allowed to read this post.
 	 */
 	protected function check_read_permission( $post ) {
 		$post_type = get_post_type_object( $post['post_type'] );
@@ -261,9 +269,10 @@ class B3_Comment extends B3_API {
 	/**
 	 * Check if the current user is allowed to comment on a post.
 	 *
-	 * @param  array   $post Post data.
-	 * @return boolean       Whether the current user is allowed to
-	 *                       comment on this post.
+	 * @param array $post Post data.
+	 *
+	 * @return boolean Whether the current user is allowed to comment on this
+	 *                 post.
 	 */
 	protected function check_reply_permission( $post ) {
 		return comments_open( $post['ID'] );
@@ -272,9 +281,10 @@ class B3_Comment extends B3_API {
 	/**
 	 * Check if the current user is allowed to edit a comment.
 	 *
-	 * @param  array   $comment Comment data.
-	 * @return boolean          Whether the current user is allowed to
-	 *                          edit this resource.
+	 * @param array $comment Comment data.
+	 *
+	 * @return boolean Whether the current user is allowed to edit this
+	 *                 resource.
 	 *
 	 * @todo
 	 */
@@ -285,9 +295,10 @@ class B3_Comment extends B3_API {
 	/**
 	 * Check if the current user is allowed to delete a comment.
 	 *
-	 * @param  array   $comment Comment data.
-	 * @return boolean          Whether the current user is allowed to
-	 *                          delete this resource.
+	 * @param array $comment Comment data.
+	 *
+	 * @return boolean Whether the current user is allowed to delete this
+	 *                 resource.
 	 *
 	 * @todo
 	 */
@@ -298,10 +309,11 @@ class B3_Comment extends B3_API {
 	/**
 	 * Prepare Comment entity for returning.
 	 *
-	 * @param  object $comment          Raw comment data.
-	 * @param  array  $requested_fields Fields to include.
-	 * @param  string $context          Request context. (single|collection)
-	 * @return array                    Prepared comment entity.
+	 * @param object $comment          Raw comment data.
+	 * @param array  $requested_fields Fields to include.
+	 * @param string $context          Request context. (single|collection)
+	 *
+	 * @return array Prepared comment entity.
 	 */
 	protected function prepare_comment( $comment, $requested_fields = array( 'comment', 'meta' ), $context = 'single' ) {
 		$fields = array(
@@ -353,12 +365,13 @@ class B3_Comment extends B3_API {
 	/**
 	 * Alter Post entities returned by the service.
 	 *
-	 * - Changes the reply link to use the `/posts/{id}/b3:replies` endpoint.
+	 * - Changes the reply link to use the `/{type}/{id}/b3:replies` endpoint.
 	 *
-	 * @param  array  $_post   Post entity data.
-	 * @param  array  $post    Raw post data.
-	 * @param  string $context The context for the prepared post. (view|view-revision|edit|embed)
-	 * @return array           Changed post entity data.
+	 * @param array  $_post   Post entity data.
+	 * @param array  $post    Raw post data.
+	 * @param string $context The context for the prepared post. (view|view-revision|edit|embed)
+	 *
+	 * @return array Changed post entity data.
 	 */
 	public function prepare_post( $_post, $post, $context ) {
 
@@ -430,9 +443,10 @@ class B3_Comment extends B3_API {
 	/**
 	 * Prepare comment meta object.
 	 *
-	 * @param  object $comment Raw comment data.
-	 * @param  string $context Request context. (single|collection)
-	 * @return array           Comment meta data.
+	 * @param object $comment Raw comment data.
+	 * @param string $context Request context. (single|collection)
+	 *
+	 * @return array Comment meta data.
 	 */
 	protected function prepare_comment_meta( $comment, $context = 'single' ) {
 
@@ -459,10 +473,11 @@ class B3_Comment extends B3_API {
 	 * The resulting array should still be passed to `wp_new_comment()` for
 	 * sanitization.
 	 *
-	 * @param  array $data    Comment data.
-	 * @param  array $post    Data for the post being replied to.
-	 * @param  array $comment Data for the comment being replied to.
-	 * @return array          Prepared comment data.
+	 * @param array $data    Comment data.
+	 * @param array $post    Data for the post being replied to.
+	 * @param array $comment Data for the comment being replied to.
+	 *
+	 * @return array Prepared comment data.
 	 */
 	protected function prepare_new_comment( $data, $post, $comment = null ) {
 
@@ -502,8 +517,9 @@ class B3_Comment extends B3_API {
 	/**
 	 * Populate comment with data from the currently logged in user.
 	 *
-	 * @param  array $comment New comment data.
-	 * @return array          New comment data with author information.
+	 * @param array $comment New comment data.
+	 *
+	 * @return array New comment data with author information.
 	 */
 	protected function prepare_new_comment_author( $comment ) {
 		if ( is_user_logged_in() ) {
@@ -524,8 +540,9 @@ class B3_Comment extends B3_API {
 	/**
 	 * Validate comment.
 	 *
-	 * @param  array 		  $comment Comment data to validate.
-	 * @return array|WP_Error          Validated comment or error.
+	 * @param array $comment Comment data to validate.
+	 *
+	 * @return array|WP_Error Validated comment or error.
 	 */
 	protected function validate_comment( $comment ) {
 		if ( get_option( 'require_name_email' ) ) {
