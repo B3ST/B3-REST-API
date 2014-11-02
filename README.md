@@ -2,9 +2,15 @@
 
 This plugin extends the [WP-API](https://github.com/WP-API/WP-API) in order to retrieve data not yet handled by the official plugin, such as settings, menus and sidebars.
 
-This plugin is under active development and should not be considered for production environments.
-
 [![Build Status](https://scrutinizer-ci.com/g/B3ST/B3-REST-API/badges/build.png?b=master)](https://scrutinizer-ci.com/g/B3ST/B3-REST-API/build-status/master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/B3ST/B3-REST-API/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/B3ST/B3-REST-API/?branch=master)
+
+## Warning
+
+**The official WP API is undergoing substantial changes and may break compatibility with B3 at any time.**
+
+It is recommended that you either use [the version on WordPress.org](https://wordpress.org/plugins/json-rest-api/) or at the very least stick to the [master branch](https://github.com/WP-API/WP-API) in order to minimize issues.
+
+Also, please bear in mind that B3 is a work in progress and can't (yet) be considered ready for production use. Do so at your own risk.
 
 ## Installation
 
@@ -26,10 +32,18 @@ We provide an alternative implementation of the Comments resource that allows re
 * `GET` `/b3:comments/<id>`
 * `GET` `/b3:comments/<id>/b3:replies`
 * `POST` `/b3:comments/<id>/b3:replies`
+* `GET` `/media/<id>/b3:replies`
+* `POST` `/media/<id>/b3:replies`
 * `GET` `/pages/<id>/b3:replies`
 * `POST` `/pages/<id>/b3:replies`
 * `GET` `/posts/<id>/b3:replies`
 * `POST` `/posts/<id>/b3:replies`
+
+### Media
+
+This endpoint provides a way to fetch a media attachment by its slug.
+
+* `GET` `/media/b3:slug:<slug>`
 
 ### Posts
 
