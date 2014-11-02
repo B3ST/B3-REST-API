@@ -9,12 +9,12 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 /**
- * Extends the default Post resource API.
+ * Extends the default Media resource API.
  */
 class B3_Media extends B3_API {
 
 	/**
-	 * Register new API routes for the Post resource.
+	 * Register new API routes for the Media resource.
 	 *
 	 * @param  array $routes API routes.
 	 * @return array         Changed API routes.
@@ -31,12 +31,12 @@ class B3_Media extends B3_API {
 	}
 
 	/**
-	 * Retrieve a post by slug.
+	 * Retrieve a post attachment by slug.
 	 *
-	 * @uses get_post()
-	 * @param  string $slug    Post slug.
-	 * @param  string $Context Context in which the post appears.
-	 * @return array           Post entity.
+	 * @param  string         $slug    Attachment slug.
+	 * @param  string         $context Context in which the attachment appears.
+	 *
+	 * @return array|WP_Error          Attachment entity, or error.
 	 */
 	public function get_post( $slug, $context = 'view' ) {
 		global $wp_json_media;

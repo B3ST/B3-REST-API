@@ -33,10 +33,10 @@ class B3_Post extends B3_API {
 	/**
 	 * Retrieve a post by slug.
 	 *
-	 * @uses get_post()
-	 * @param  string $slug    Post slug.
-	 * @param  string $Context Context in which the post appears.
-	 * @return array           Post entity.
+	 * @param  string         $slug    Post slug.
+	 * @param  string         $context Context in which the post appears.
+	 *
+	 * @return array|WP_Error          Post entity, or error.
 	 */
 	public function get_post( $slug, $context = 'view' ) {
 		global $wp_json_posts;
