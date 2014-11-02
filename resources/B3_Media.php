@@ -60,25 +60,4 @@ class B3_Media extends B3_API {
 		return $wp_json_media->get_post( $posts[0]->ID, $context );
 	}
 
-	/**
-	 * Alter Post entities returned by the service.
-	 *
-	 * - Changes the reply link to use the `/posts/{id}/b3:replies` endpoint.
-	 *
-	 * @param  array  $_post   Post entity data.
-	 * @param  array  $post    Raw post data.
-	 * @param  string $context The context for the prepared post. (view|view-revision|edit|embed)
-	 * @return array           Changed post entity data.
-	 */
-	public function json_prepare_post( $_post, $post, $context ) {
-
-		if ( 'view-revision' !== $context ) {
-			$replies = $_post['meta']['links']['replies'];
-			$replies = preg_replace( '/\/comments$/', '/b3:replies', $replies );
-			$_post['meta']['links']['b3:replies'] = $replies;
-		}
-
-		return $_post;
-	}
-
 }

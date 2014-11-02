@@ -136,17 +136,11 @@ class B3_JSON_REST_API {
 
 		foreach ( $this->resources as $class => $resource ) {
 			include_once dirname( __FILE__ ) . '/resources/' . $class . '.php';
-
 			$this->resources[ $class ] = $resource = new $class( $server );
-
 			add_filter( 'json_endpoints', array( $resource, 'register_routes' ), 10, 1 );
 		}
 
-		$post_types = get_post_types( array( 'show_in_json' => true ) );
-
-		foreach ( $post_types as $type ) {
-			add_filter( "json_prepare_{$type}", array( $this->resources['B3_Post'], 'json_prepare_post' ), 10, 3 );
-		}
+		add_filter( 'json_prepare_post', array( $this->resources['B3_Comment'], 'prepare_post' ), 10, 3 );
 	}
 
 	/**
