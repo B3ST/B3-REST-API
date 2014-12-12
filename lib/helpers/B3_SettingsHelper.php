@@ -18,9 +18,10 @@ class B3_SettingsHelper {
 	 * separately.
 	 *
 	 * @param  string $option Option name.
+	 *
 	 * @return mixed          Option value.
 	 */
-	public function __get( $option ) {
+	public function get_option( $option ) {
 		switch ( $option ) {
 			case 'api_url':
 				return home_url( json_get_url_prefix() );
