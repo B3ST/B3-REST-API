@@ -43,9 +43,9 @@ class B3_Settings extends B3_API {
 	/**
 	 * Creates a new resource handler for the Settings entity.
 	 *
-	 * @param WP_JSON_ResponseHandler $server The REST API response handler.
+	 * @param WP_JSON_Server $server The REST API response handler.
 	 */
-	public function __construct( WP_JSON_ResponseHandler $server ) {
+	public function __construct( WP_JSON_Server $server ) {
 		parent::__construct( $server );
 
 		$this->settings = new B3_SettingsHelper();

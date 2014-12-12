@@ -17,16 +17,16 @@ abstract class B3_API {
 
 	/**
 	 * WP API server.
-	 * @var WP_JSON_ResponseHandler
+	 * @var WP_JSON_Server
 	 */
 	protected $server;
 
 	/**
 	 * Resource handler constructor.
 	 *
-	 * @param WP_JSON_ResponseHandler $server WP API response handler.
+	 * @param WP_JSON_Server $server WP API response handler.
 	 */
-	public function __construct( WP_JSON_ResponseHandler $server ) {
+	public function __construct( WP_JSON_Server $server ) {
 		$this->server = $server;
 	}
 

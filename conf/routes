@@ -1,0 +1,34 @@
+# Comments
+
+GET     /posts/(?P<id>\d+)/replies      B3_Comments_Controller->get_items
+POST    /posts/(?P<id>\d+)/replies      B3_Comments_Controller->create_item
+
+GET     /pages/(?P<id>\d+)/replies      B3_Comments_Controller->get_items
+POST    /pages/(?P<id>\d+)/replies      B3_Comments_Controller->create_item
+
+GET     /comments/(?P<id>\d+)           B3_Comments_Controller->get_item
+PUT     /comments/(?P<id>\d+)           B3_Comments_Controller->update_item
+PATCH   /comments/(?P<id>\d+)           B3_Comments_Controller->update_item
+DELETE  /comments/(?P<id>\d+)           B3_Comments_Controller->delete_item
+
+GET     /comments/(?P<id>\d+)/replies   B3_Comments_Controller->get_items
+POST    /comments/(?P<id>\d+)/replies   B3_Comments_Controller->create_item
+
+# Menus
+
+GET     /menus                          B3_Menus_Controller->get_items
+GET     /menus/(?P<location>.+)         B3_Menus_Controller->get_item
+
+# Posts
+
+GET     /posts/~(?P<slug>.+)            B3_Posts_Controller->get_item
+
+# Settings
+
+GET     /settings                       B3_Settings_Controller->get_items
+GET     /settings/(?P<option>.+)        B3_Settings_Controller->get_item
+
+# Widgets
+
+GET     /sidebars                       B3_Menus_Controller->get_items
+GET     /sidebars/(?P<index>.+)         B3_Menus_Controller->get_item

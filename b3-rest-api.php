@@ -13,7 +13,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       B3 REST API Extensions
- * Version:           0.1.0-alpha
+ * Version:           0.2.0-alpha
  * Description:       This plugin extends the WP-API in order to support B3 and
  *                    your projects.
  * Author:            The B3 Team
@@ -30,14 +30,13 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-require_once dirname( __FILE__ ) . '/functions.php';
+require_once dirname( __FILE__ ) . '/loader.php';
+
 require_once dirname( __FILE__ ) . '/resources/B3_API.php';
-require_once dirname( __FILE__ ) . '/helpers/B3_RoutesHelper.php';
-require_once dirname( __FILE__ ) . '/helpers/B3_SettingsHelper.php';
 
 class B3_JSON_REST_API {
 
-	const VERSION = '0.1.0-alpha';
+	const VERSION = '0.2.0-alpha';
 
 	/**
 	 * Unique identifier for the B3 REST API plugin.
@@ -65,6 +64,8 @@ class B3_JSON_REST_API {
 
 	/**
 	 * Plugin constructor.
+	 *
+	 * @fixme JIBBERS CRABST WHY AM I CALLING ADD_ACTION() IN A CONSTRUCTOR
 	 */
 	public function __construct() {
 
@@ -113,6 +114,8 @@ class B3_JSON_REST_API {
 	 * Called by the `init` action.
 	 */
 	public function init() {
+		B3_Loader::ready();
+
 		$domain = $this->plugin_slug;
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 
@@ -120,7 +123,17 @@ class B3_JSON_REST_API {
 		load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . $domain . '/' . $domain . '-' . $locale . '.mo' );
 		load_plugin_textdomain( $domain, FALSE, basename( plugin_dir_path( dirname( __FILE__ ) ) ) . '/languages/' );
 
+		add_action( 'wp_json_server_before_serve', array( $this, 'init_router' ), 99, 0 );
+
 		add_action( 'wp_json_server_before_serve', array( $this, 'default_filters' ), 10, 1 );
+	}
+
+	/**
+	 * Initialize the router.
+	 */
+	public function init_router() {
+		$router = new B3_Router( $this );
+		$router->init();
 	}
 
 	/**
@@ -128,9 +141,9 @@ class B3_JSON_REST_API {
 	 *
 	 * Called by the `wp_json_server_before_serve` action.
 	 *
-	 * @param  WP_JSON_ResponseHandler $server WP API response handler.
+	 * @param  WP_JSON_Server $server WP API response handler.
 	 */
-	public function default_filters( WP_JSON_ResponseHandler $server ) {
+	public function default_filters( WP_JSON_Server $server ) {
 		$this->server = $server;
 
 		foreach ( $this->resources as $class => $resource ) {
