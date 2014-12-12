@@ -32,6 +32,9 @@ class B3_Settings_Controller extends WP_JSON_Controller {
 		'language',
 	);
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		$this->settings = new B3_SettingsHelper();
 	}
@@ -79,20 +82,16 @@ class B3_Settings_Controller extends WP_JSON_Controller {
 		$value  = $item['value'];
 		$data   = $item;
 
-		$data['_links'] = array(
-			'self' => array(
-				'href' => json_url( sprintf( 'b3/settings/%s', $option ) ),
-			),
-		);
+		$data['_links'] = array();
 
 		if ( 'page_on_front' === $option && ! empty( $value ) ) {
 			$data['_links']['page'] = array( 'href' => json_url( 'pages/' . $value ) );
 		}
 
+		$data['_links']['self'] 	  = array( 'href' => json_url( sprintf( 'b3/settings/%s', $option ) ), );
 		$data['_links']['collection'] = array( 'href' => json_url( 'b3/settings' ) );
 
 		return apply_filters( 'b3_prepare_setting', $data, $item, $request );
-
 	}
 
 	/**
