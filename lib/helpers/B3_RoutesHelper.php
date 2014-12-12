@@ -66,7 +66,7 @@ class B3_RoutesHelper {
 		$this->add_page_routes();
 
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			$this->unfold_tokens();
+			$this->debug_tokens();
 		}
 	}
 
@@ -103,7 +103,7 @@ class B3_RoutesHelper {
 		$route = preg_replace_callback( '/%([^%]+)%/', array( $this, 'prepare_route_replace' ), $route );
 
 		// Trim leading and trailing slashes:
-		$route = preg_replace( '#^/|/$#', '', $route );
+		$route = trim( $route, '/' );
 
 		return $route;
 	}
@@ -287,8 +287,6 @@ class B3_RoutesHelper {
 			$mask     = ($post_type === 'attachment') ? B3_EP_COMMENTS | B3_EP_PAGE : B3_EP_ALL;
 
 			$this->add_routes( $route, $resource, $mask );
-
-			// $this->add_routes( $route, array( 'object' => 'archive', 'type' => $post_type ), B3_EP_PAGE );
 		}
 	}
 
@@ -318,7 +316,7 @@ class B3_RoutesHelper {
 	/**
 	 * Extract tokens from routes and include them as resource data.
 	 */
-	protected function unfold_tokens() {
+	protected function debug_tokens() {
 		foreach ( $this->routes as $route => $resource ) {
 			$tokens = array();
 			preg_match_all( '#[:*]([^/:*()]+)#', $route, $tokens );

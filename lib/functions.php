@@ -4,8 +4,21 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-if ( ! function_exists( 'ifsetor' ) ) :
+if ( ! function_exists( 'b3_api_error' ) ) {
+	/**
+	 * Generates a REST API error.
+	 *
+	 * @param  string   $code    Error code.
+	 * @param  string   $message Error message.
+	 * @param  int      $status  HTTP status code (default: 500).
+	 * @return WP_Error          Error object.
+	 */
+	function b3_api_error( $code, $message, $status = 500 ) {
+		return new WP_Error( $code, $message, array( 'status' => $status ) );
+	}
+}
 
+if ( ! function_exists( 'ifsetor' ) ) {
 	/**
 	 * Returns the value if it exists or a given default value.
 	 *
@@ -23,5 +36,5 @@ if ( ! function_exists( 'ifsetor' ) ) :
 
 		return $variable;
 	}
+}
 
-endif;

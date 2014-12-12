@@ -108,6 +108,7 @@ class B3_Router {
 
 		if ( strpos( $callback, '::' ) ) {
 			list( $class, $method ) = explode( '::', $callback );
+
 			return method_exists( $class, $method ) ? array( $class, $method ) : false;
 		}
 
