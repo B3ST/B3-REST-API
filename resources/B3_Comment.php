@@ -53,12 +53,12 @@ class B3_Comment extends B3_API {
 		$post = get_post( $id, ARRAY_A );
 
 		if ( empty( $post['ID'] ) ) {
-			return B3_JSON_REST_API::error( 'json_post_invalid_id',
+			return b3_api_error( 'json_post_invalid_id',
 				__( 'Invalid post ID.', 'b3-rest-api' ), 404 );
 		}
 
 		if ( ! $this->check_read_permission( $post ) ) {
-			return B3_JSON_REST_API::error( 'json_user_cannot_read',
+			return b3_api_error( 'json_user_cannot_read',
 				__( 'Sorry, you cannot read this post.', 'b3-rest-api' ), 401 );
 		}
 
@@ -93,7 +93,7 @@ class B3_Comment extends B3_API {
 		$comment_ID  = wp_new_comment( $new_comment );
 
 		if ( ! $comment_ID ) {
-			return B3_JSON_REST_API::error( 'json_insert_error',
+			return b3_api_error( 'json_insert_error',
 				__( 'There was an error processing your comment.', 'b3-rest-api' ), 500 );
 		}
 
@@ -111,14 +111,14 @@ class B3_Comment extends B3_API {
 		$comment = get_comment( $id );
 
 		if ( empty( $comment->comment_ID ) ) {
-			return B3_JSON_REST_API::error( 'json_comment_invalid_id',
+			return b3_api_error( 'json_comment_invalid_id',
 				__( 'Invalid comment ID.', 'b3-rest-api' ), 404 );
 		}
 
 		$post = get_post( $comment->comment_post_ID, ARRAY_A );
 
 		if ( ! $this->check_read_permission( $post ) ) {
-			return B3_JSON_REST_API::error( 'json_user_cannot_read',
+			return b3_api_error( 'json_user_cannot_read',
 				__( 'Sorry, you cannot read replies to this post.', 'b3-rest-api' ), 403 );
 		}
 
@@ -135,7 +135,7 @@ class B3_Comment extends B3_API {
 	 * @todo
 	 */
 	public function update_comment( $id, $data ) {
-		return B3_JSON_REST_API::error( 'json_not_implemented',
+		return b3_api_error( 'json_not_implemented',
 			__( 'Not yet implemented.', 'b3-rest-api' ), 501 );
 	}
 
@@ -148,7 +148,7 @@ class B3_Comment extends B3_API {
 	 * @todo
 	 */
 	public function delete_comment( $id ) {
-		return B3_JSON_REST_API::error( 'json_not_implemented',
+		return b3_api_error( 'json_not_implemented',
 			__( 'Not yet implemented.', 'b3-rest-api' ), 501 );
 	}
 
@@ -164,14 +164,14 @@ class B3_Comment extends B3_API {
 		$comment = get_comment( $id );
 
 		if ( empty( $comment->comment_ID ) ) {
-			return B3_JSON_REST_API::error( 'json_comment_invalid_id',
+			return b3_api_error( 'json_comment_invalid_id',
 				__( 'Invalid comment ID.', 'b3-rest-api' ), 404 );
 		}
 
 		$post = get_post( $comment->comment_post_ID, ARRAY_A );
 
 		if ( ! $this->check_read_permission( $post ) ) {
-			return B3_JSON_REST_API::error( 'json_user_cannot_read',
+			return b3_api_error( 'json_user_cannot_read',
 				__( 'Sorry, you cannot read this post.', 'b3-rest-api' ), 401 );
 		}
 
@@ -198,7 +198,7 @@ class B3_Comment extends B3_API {
 		$comment = get_comment( $id );
 
 		if ( empty( $comment->comment_ID ) ) {
-			return B3_JSON_REST_API::error( 'json_comment_invalid_id',
+			return b3_api_error( 'json_comment_invalid_id',
 				__( 'Invalid comment ID.', 'b3-rest-api' ), 404 );
 		}
 
@@ -213,7 +213,7 @@ class B3_Comment extends B3_API {
 		$comment_ID  = wp_new_comment( $new_comment );
 
 		if ( ! $comment_ID ) {
-			return B3_JSON_REST_API::error( 'json_insert_error',
+			return b3_api_error( 'json_insert_error',
 				__( 'There was an error processing your comment.', 'b3-rest-api' ), 500 );
 		}
 
@@ -446,17 +446,17 @@ class B3_Comment extends B3_API {
 	protected function prepare_new_comment( $data, $post, $comment = null ) {
 
 		if ( empty( $post['ID'] ) ) {
-			return B3_JSON_REST_API::error( 'json_post_invalid_id',
+			return b3_api_error( 'json_post_invalid_id',
 				__( 'Invalid post ID.', 'b3-rest-api' ), 404 );
 		}
 
 		if ( ! $this->check_read_permission( $post ) ) {
-			return B3_JSON_REST_API::error( 'json_user_cannot_read',
+			return b3_api_error( 'json_user_cannot_read',
 				__( 'Sorry, you cannot read replies to this post.', 'b3-rest-api' ), 403 );
 		}
 
 		if ( ! $this->check_reply_permission( $post ) ) {
-			return B3_JSON_REST_API::error( 'json_user_cannot_reply',
+			return b3_api_error( 'json_user_cannot_reply',
 				__( 'Sorry, you cannot reply to this post.', 'b3-rest-api' ), 403 );
 		}
 
@@ -509,18 +509,18 @@ class B3_Comment extends B3_API {
 	protected function validate_comment( $comment ) {
 		if ( get_option( 'require_name_email' ) ) {
 			if ( empty( $comment['comment_author_email'] ) || '' == $comment['comment_author'] ) {
-				return B3_JSON_REST_API::error( 'json_bad_comment',
+				return b3_api_error( 'json_bad_comment',
 					__( 'Comment author name and email are required.', 'b3-rest-api' ), 400 );
 			}
 
 			if ( ! is_email( $comment['comment_author_email'] ) ) {
-				return B3_JSON_REST_API::error( 'json_bad_comment',
+				return b3_api_error( 'json_bad_comment',
 					__( 'A valid email address is required.', 'b3-rest-api' ), 400 );
 			}
 		}
 
 		if ( empty( $comment['comment_content'] ) ) {
-			return B3_JSON_REST_API::error( 'json_bad_comment',
+			return b3_api_error( 'json_bad_comment',
 				__( 'Your comment must not be empty.', 'b3-rest-api' ), 400 );
 		}
 

@@ -9,56 +9,17 @@ class B3_Posts_Controller extends WP_JSON_Controller {
 	 * @param WP_JSON_Request $request Full details about the request
 	 *
 	 * @return array|WP_Error
-	 */
-	public function get_items( $request ) {
-		// TODO
-	}
-
-	/**
-	 * @param WP_JSON_Request $request Full details about the request
 	 *
-	 * @return array|WP_Error
+	 * @todo Temporary workaround until we get a new posts controller to subclass.
 	 */
 	public function get_item( $request ) {
-		// TODO
-	}
+		$slug       = sanitize_text_field( $request->get_param( 'slug' ) );
 
-	/**
-	 * @param WP_JSON_Request $request Full details about the request
-	 *
-	 * @return array|WP_Error
-	 */
-	public function create_item( $request ) {
-		// TODO
-	}
+		$controller = new WP_JSON_Posts();
 
-	/**
-	 * @param WP_JSON_Request $request Full details about the request
-	 *
-	 * @return array|WP_Error
-	 */
-	public function update_item( $request ) {
-		// TODO
-	}
+		$post       = get_page_by_path( $slug, OBJECT, get_post_types( array( 'show_in_json' => true ) ) );
 
-	/**
-	 * @param array $args
-	 * @param WP_JSON_Request $request Full details about the request
-	 *
-	 * @return array|WP_Error
-	 */
-	public function delete_item( $request ) {
-		// TODO
-	}
-
-	/**
-	 * @param obj $item Item object
-	 * @param WP_JSON_Request $request
-	 *
-	 * @return obj Prepared item object
-	 */
-	public function prepare_item_for_response( $item, $request ) {
-		// TODO
+		return $controller->get( $post->ID );
 	}
 
 	/**
@@ -88,15 +49,10 @@ class B3_Posts_Controller extends WP_JSON_Controller {
 					break;
 			}
 
-			$data = array(
-				'_links' => array(
-					'replies' => array(
-						'href' => json_url( sprintf( 'b3/%s/%d/replies', $resource, $_post['id'] ) ),
-					),
-				),
-			);
-
-			$_post = array_merge_recursive( $_post, $data );
+			/**
+			 * @todo Not working because the WP-API is currently overwriting links.
+			 */
+			$_post['_links']['replies']['href'] = json_url( sprintf( 'b3/%s/%d/replies', $resource, $_post['id'] ) );
 		}
 
 		return $_post;

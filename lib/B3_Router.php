@@ -4,9 +4,9 @@ class B3_Router {
 
 	/**
 	 * Plugin instance.
-	 * @var object
+	 * @var WP_API_Server
 	 */
-	protected $plugin;
+	protected $server;
 
 	/**
 	 * API namespace.
@@ -28,21 +28,23 @@ class B3_Router {
 
 	/**
 	 * [__construct description]
-	 * @param object $plugin    []
-	 * @param string $file      [description]
-	 * @param string $namespace [description]
+	 * @param WP_JSON_Server $server    WP-API server instance.
+	 * @param string 		 $file      [description]
+	 * @param string 		 $namespace [description]
 	 */
-	public function __construct( $plugin, $conf = '', $namespace = '' ) {
-		$conf = ! empty( $conf ) && file_exists( $conf ) ? $conf : dirname( __FILE__ ) . '/../conf/routes';
-		$this->plugin    = $plugin;
-		$this->conf      = realpath( $conf );
-		$this->namespace = ! empty( $namespace ) ? $namespace : $this->namespace;
+	public function __construct( WP_JSON_Server $server, $conf = '' ) {
+		$this->server = $server;
+		$this->conf   = realpath( $conf );
 	}
 
 	/**
 	 * Read routes file and generate routes.
 	 */
 	public function init() {
+		if ( empty( $this->conf ) || ! file_exists( $this->conf ) ) {
+			return;
+		}
+
 		$routes  = file( $this->conf );
 		$methods = implode( '|', array( 'GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS' ) );
 

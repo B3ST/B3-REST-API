@@ -21,7 +21,7 @@ GET     /menus/(?P<location>.+)         B3_Menus_Controller->get_item
 
 # Posts
 
-GET     /posts/~(?P<slug>.+)            B3_Posts_Controller->get_item
+GET     /posts/slug/(?P<slug>.+)        B3_Posts_Controller->get_item
 
 # Settings
 
@@ -30,5 +30,5 @@ GET     /settings/(?P<option>.+)        B3_Settings_Controller->get_item
 
 # Widgets
 
-GET     /sidebars                       B3_Menus_Controller->get_items
-GET     /sidebars/(?P<index>.+)         B3_Menus_Controller->get_item
+GET     /sidebars                       B3_Sidebars_Controller->get_items
+GET     /sidebars/(?P<index>.+)         B3_Sidebars_Controller->get_item

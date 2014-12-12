@@ -71,7 +71,6 @@ class B3_JSON_REST_API {
 
 		$this->resources = array(
 			'B3_Comment'  => null,
-			'B3_Post'     => null,
 			'B3_Sidebar'  => null,
 		);
 
@@ -121,51 +120,30 @@ class B3_JSON_REST_API {
 		load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . $domain . '/' . $domain . '-' . $locale . '.mo' );
 		load_plugin_textdomain( $domain, FALSE, basename( plugin_dir_path( dirname( __FILE__ ) ) ) . '/languages/' );
 
-		add_action( 'wp_json_server_before_serve', array( $this, 'init_router' ), 99, 0 );
-
-		add_action( 'wp_json_server_before_serve', array( $this, 'default_filters' ), 10, 1 );
+		add_action( 'wp_json_server_before_serve', array( $this, 'init_router' ), 99, 1 );
 	}
 
 	/**
 	 * Initialize the router.
+	 *
+	 * Called by the `wp_json_server_before_serve` action.
 	 */
-	public function init_router() {
-		$router = new B3_Router( $this );
+	public function init_router( WP_JSON_Server $server ) {
+
+		$router = new B3_Router( $server, dirname( __FILE__ ) . '/conf/routes' );
 		$router->init();
 
 		$posts_controller = $router->get_controller( 'B3_Posts_Controller' );
 
 		add_filter( 'json_prepare_post', array( $posts_controller, 'json_prepare_post' ), 99, 3 );
-	}
 
-	/**
-	 * Hooks B3 extensions to the WP API.
-	 *
-	 * Called by the `wp_json_server_before_serve` action.
-	 *
-	 * @param  WP_JSON_Server $server WP API response handler.
-	 *
-	 * @todo Get rid of this method when we're done moving to the new controllers.
-	 */
-	public function default_filters( WP_JSON_Server $server ) {
+		// Get rid of this when we're done:
 		$this->server = $server;
 		foreach ( $this->resources as $class => $resource ) {
 			include_once dirname( __FILE__ ) . '/resources/' . $class . '.php';
 			$this->resources[ $class ] = $resource = new $class( $server );
 			add_filter( 'json_endpoints', array( $resource, 'register_routes' ), 10, 1 );
 		}
-	}
-
-	/**
-	 * Generates a REST API error.
-	 *
-	 * @param  string   $code    Error code.
-	 * @param  string   $message Error message.
-	 * @param  int      $status  HTTP status code (default: 500).
-	 * @return WP_Error          Error object.
-	 */
-	public static function error( $code, $message, $status = 500 ) {
-		return new WP_Error( $code, $message, array( 'status' => $status ) );
 	}
 
 }
