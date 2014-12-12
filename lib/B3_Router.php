@@ -67,6 +67,32 @@ class B3_Router {
 	}
 
 	/**
+	 * Get controller instances created by the router.
+	 *
+	 * @return array Controller instances.
+	 */
+	public function get_controllers() {
+		return $this->controllers;
+	}
+
+	/**
+	 * [get_controller description]
+	 * @param  [type] $class [description]
+	 * @return [type]        [description]
+	 */
+	public function get_controller( $class ) {
+		if ( ! class_exists( $class ) ) {
+			return false;
+		}
+
+		if ( empty( $this->controllers[ $class ] ) ) {
+			$this->controllers[ $class ] = new $class;
+		}
+
+		return $this->controllers[ $class ];
+	}
+
+	/**
 	 * [callback description]
 	 * @param  [type]   $callback [description]
 	 * @return callable           [description]
@@ -86,23 +112,6 @@ class B3_Router {
 		}
 
 		return function_exists( $callback ) ? $callback : false;
-	}
-
-	/**
-	 * [get_controller description]
-	 * @param  [type] $class [description]
-	 * @return [type]        [description]
-	 */
-	protected function get_controller( $class ) {
-		if ( ! class_exists( $class ) ) {
-			return false;
-		}
-
-		if ( empty( $this->controllers[ $class ] ) ) {
-			$this->controllers[ $class ] = new $class;
-		}
-
-		return $this->controllers[ $class ];
 	}
 
 	/**

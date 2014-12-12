@@ -134,6 +134,10 @@ class B3_JSON_REST_API {
 	public function init_router() {
 		$router = new B3_Router( $this );
 		$router->init();
+
+		$posts_controller = $router->get_controller( 'B3_Posts_Controller' );
+
+		add_filter( 'json_prepare_post', array( $posts_controller, 'json_prepare_post' ), 99, 3 );
 	}
 
 	/**
@@ -142,22 +146,15 @@ class B3_JSON_REST_API {
 	 * Called by the `wp_json_server_before_serve` action.
 	 *
 	 * @param  WP_JSON_Server $server WP API response handler.
+	 *
+	 * @todo Get rid of this method when we're done moving to the new controllers.
 	 */
 	public function default_filters( WP_JSON_Server $server ) {
 		$this->server = $server;
-
 		foreach ( $this->resources as $class => $resource ) {
 			include_once dirname( __FILE__ ) . '/resources/' . $class . '.php';
-
 			$this->resources[ $class ] = $resource = new $class( $server );
-
 			add_filter( 'json_endpoints', array( $resource, 'register_routes' ), 10, 1 );
-		}
-
-		$post_types = get_post_types( array( 'show_in_json' => true ) );
-
-		foreach ( $post_types as $type ) {
-			add_filter( "json_prepare_{$type}", array( $this->resources['B3_Post'], 'json_prepare_post' ), 10, 3 );
 		}
 	}
 
