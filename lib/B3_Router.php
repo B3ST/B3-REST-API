@@ -42,11 +42,14 @@ class B3_Router {
 	/**
 	 * Parse route configuration file.
 	 *
-	 * @param  string $file      Route configuration file name.
+	 * @param  string $filename  Route configuration file name.
 	 * @param  string $namespace Routes namespace.
+	 *
+	 * @todo Parse additional route arguments and types.
 	 */
 	protected function parse_conf( $filename, $namespace ) {
 		$routes  = file( $filename );
+
 		$methods = implode( '|', array( 'GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS' ) );
 
 		foreach ( $routes as $route ) {
@@ -70,19 +73,27 @@ class B3_Router {
 	}
 
 	/**
-	 * [callback description]
-	 * @param  [type]   $callback [description]
-	 * @return callable           [description]
+	 * Parses callback information the configuration file.
+	 *
+	 * Accepted formats:
+	 *
+	 * - `{{instance class name}}->{{method name}}`: Instance method.
+	 * - `{{class name}}::{{method name}}`:          Class (static) method.
+	 * - `{{function name}}`:                        Function.
+	 *
+	 * These methods and functions must be able to take a request object as
+	 * their sole parameter.
+	 *
+	 * @param  string   $callback Callback description.
+	 * @return callable           Corresponding PHP callable.
 	 */
 	protected function parse_callback( $callback ) {
 
 		if ( strpos( $callback, '->' ) ) {
 			list( $class, $method ) = explode( '->', $callback );
+			$instance = $this->server->controllers->register( $class );
 
-			$instance      = $this->server->controllers->register( $class );
-			$is_controller = method_exists( $instance, $method ) && $instance instanceOf WP_JSON_Controller;
-
-			return $is_controller ? array( $instance, $method ) : null;
+			return method_exists( $instance, $method ) ? array( $instance, $method ) : null;
 		}
 
 		if ( strpos( $callback, '::' ) ) {
