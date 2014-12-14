@@ -11,7 +11,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Implements a Comment resource API.
  */
-class B3_Comment extends B3_API {
+class B3_Comment {
 
 	/**
 	 * Register API routes for the Comment resource.

@@ -32,8 +32,6 @@ if ( ! defined( 'WPINC' ) ) {
 
 require_once dirname( __FILE__ ) . '/loader.php';
 
-require_once dirname( __FILE__ ) . '/resources/B3_API.php';
-
 class B3_JSON_REST_API {
 
 	const VERSION = '0.2.0-alpha';
@@ -74,7 +72,7 @@ class B3_JSON_REST_API {
 	}
 
 	public function load() {
-		add_action( 'init', array( $this, 'init_load' ), 99 );
+		add_action( 'init', array( $this, 'init' ), 99 );
 		add_action( 'init', array( $this, 'init_i18n' ), 99 );
 		add_action( 'wp_json_server_before_serve', array( $this, 'init_server' ), 99, 1 );
 	}
@@ -84,7 +82,7 @@ class B3_JSON_REST_API {
 	 *
 	 * Called by the `init` action.
 	 */
-	public function init_load() {
+	public function init() {
 		B3_Loader::ready();
 	}
 

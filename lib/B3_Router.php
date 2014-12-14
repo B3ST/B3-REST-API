@@ -75,34 +75,34 @@ class B3_Router {
 			$instance      = $this->server->controllers->register( $class );
 			$is_controller = method_exists( $instance, $method ) && $instance instanceOf WP_JSON_Controller;
 
-			return $is_controller ? array( $instance, $method ) : false;
+			return $is_controller ? array( $instance, $method ) : null;
 		}
 
 		if ( strpos( $callback, '::' ) ) {
 			list( $class, $method ) = explode( '::', $callback );
 
-			return method_exists( $class, $method ) ? array( $class, $method ) : false;
+			return method_exists( $class, $method ) ? array( $class, $method ) : null;
 		}
 
-		return function_exists( $callback ) ? $callback : false;
+		return function_exists( $callback ) ? $callback : null;
 	}
 
 	/**
 	 * Add a route.
 	 *
 	 * @param [type] $method   [description]
-	 * @param [type] $route    [description]
+	 * @param [type] $pattern  [description]
 	 * @param [type] $callback [description]
 	 * @param array  $args     [description]
 	 */
-	protected function add_route( $method, $route, $callback, $args = array() ) {
+	protected function add_route( $method, $pattern, $callback, $args = array() ) {
 		$args = array(
 			'methods'  => $method,
 			'callback' => $callback,
 			'args'     => $args,
 		);
 
-		register_json_route( $this->namespace, $route, $args );
+		register_json_route( $this->namespace, $pattern, $args );
 	}
 
 }
