@@ -6,13 +6,13 @@ POST    /posts/(?P<id>\d+)/replies      B3_Comments_Controller->create_item
 GET     /pages/(?P<id>\d+)/replies      B3_Comments_Controller->get_items
 POST    /pages/(?P<id>\d+)/replies      B3_Comments_Controller->create_item
 
+GET     /comments/(?P<id>\d+)/replies   B3_Comments_Controller->get_items
+POST    /comments/(?P<id>\d+)/replies   B3_Comments_Controller->create_item
+
 GET     /comments/(?P<id>\d+)           B3_Comments_Controller->get_item
 PUT     /comments/(?P<id>\d+)           B3_Comments_Controller->update_item
 PATCH   /comments/(?P<id>\d+)           B3_Comments_Controller->update_item
 DELETE  /comments/(?P<id>\d+)           B3_Comments_Controller->delete_item
-
-GET     /comments/(?P<id>\d+)/replies   B3_Comments_Controller->get_items
-POST    /comments/(?P<id>\d+)/replies   B3_Comments_Controller->create_item
 
 # Menus
 

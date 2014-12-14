@@ -2,7 +2,14 @@
 
 class B3_Loader {
 
+	/**
+	 * Class files.
+	 * @var array
+	 */
 	protected static $classes = array(
+		'registry' => array(
+			'B3_Controller_Registry',
+		),
 		'controllers' => array(
 			'B3_Comments_Controller',
 			'B3_Menus_Controller',
@@ -16,13 +23,19 @@ class B3_Loader {
 		),
 	);
 
+	/**
+	 * Source files.
+	 * @var array
+	 */
 	protected static $files = array(
-		'lib/registry/B3_Controller_Registry',
-		'lib/B3_Server',
-		'lib/B3_Router',
-		'lib/functions',
+		'B3_Server',
+		'B3_Router',
+		'functions',
 	);
 
+	/**
+	 * Loads sources.
+	 */
 	public static function ready() {
 		foreach ( static::$classes as $dir => $classes ) {
 			foreach ( $classes as $class ) {
@@ -31,7 +44,7 @@ class B3_Loader {
 		}
 
 		foreach ( static::$files as $file ) {
-			require_once dirname( __FILE__ ) . "/$file.php";
+			require_once dirname( __FILE__ ) . "/lib/$file.php";
 		}
 	}
 

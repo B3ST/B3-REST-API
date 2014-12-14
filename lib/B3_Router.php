@@ -4,9 +4,23 @@ class B3_Router {
 
 	/**
 	 * Plugin instance.
-	 * @var WP_API_Server
+	 * @var WP_JSON_Server
 	 */
 	protected $server;
+
+	/**
+	 * Supported HTTP method verbs
+	 * @var array
+	 */
+	protected $supported_methods = array(
+		'GET',
+		'POST',
+		'PUT',
+		'DELETE',
+		'HEAD',
+		'PATCH',
+		'OPTIONS',
+	);
 
 	/**
 	 * [__construct description]
@@ -49,8 +63,7 @@ class B3_Router {
 	 */
 	protected function parse_conf( $filename, $namespace ) {
 		$routes  = file( $filename );
-
-		$methods = implode( '|', array( 'GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS' ) );
+		$methods = implode( '|', $this->supported_methods );
 
 		foreach ( $routes as $route ) {
 			$matches = array();
@@ -91,7 +104,7 @@ class B3_Router {
 
 		if ( strpos( $callback, '->' ) ) {
 			list( $class, $method ) = explode( '->', $callback );
-			$instance = $this->server->controllers->register( $class );
+			$instance = $this->server->controllers()->register( $class );
 
 			return method_exists( $instance, $method ) ? array( $instance, $method ) : null;
 		}

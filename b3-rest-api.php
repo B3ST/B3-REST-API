@@ -73,8 +73,8 @@ class B3_JSON_REST_API {
 
 	public function load() {
 		add_action( 'init', array( $this, 'init' ), 99 );
-		add_action( 'init', array( $this, 'init_i18n' ), 99 );
-		add_action( 'wp_json_server_before_serve', array( $this, 'init_server' ), 99, 1 );
+		add_action( 'init', array( $this, 'setup_i18n' ), 99 );
+		add_action( 'wp_json_server_before_serve', array( $this, 'setup_server' ), 99, 1 );
 	}
 
 	/**
@@ -93,11 +93,11 @@ class B3_JSON_REST_API {
 	 *
 	 * @return [type] [description]
 	 */
-	public function init_i18n() {
+	public function setup_i18n() {
 		$domain = $this->plugin_slug;
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 		load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . $domain . '/' . $domain . '-' . $locale . '.mo' );
-		load_plugin_textdomain( $domain, FALSE, basename( plugin_dir_path( dirname( __FILE__ ) ) ) . '/languages/' );
+		load_plugin_textdomain( $domain, false, basename( plugin_dir_path( dirname( __FILE__ ) ) ) . '/languages/' );
 	}
 
 	/**
@@ -105,17 +105,21 @@ class B3_JSON_REST_API {
 	 *
 	 * Called by the `wp_json_server_before_serve` action.
 	 */
-	public function init_server( WP_JSON_Server $server ) {
-		$this->server              = new B3_Server( $server );
-		$this->server->controllers = new B3_Controller_Registry( $this->server );
-		$router                    = new B3_Router( $this->server );
+	public function setup_server( WP_JSON_Server $server ) {
+		$server = new B3_Server( $server );
+		$router = new B3_Router( $server );
+
+		// Create controller registry:
+		$server->controllers( new B3_Controller_Registry( $server ) );
 
 		// Load configuration file:
 		$router->add_conf( dirname( __FILE__ ) . '/conf/routes' );
 
-		$posts_controller = $this->server->controllers->get( 'B3_Posts_Controller' );
-
+		// Register post processing hooks:
+		$posts_controller = $server->controllers()->get( 'B3_Posts_Controller' );
 		add_filter( 'json_prepare_post', array( $posts_controller, 'json_prepare_post' ), 99, 3 );
+
+		$this->server = $server;
 
 		// Get rid of this when we're done:
 		include_once dirname( __FILE__ ) . '/resources/B3_Comment.php';
@@ -128,10 +132,10 @@ class B3_JSON_REST_API {
 /**
  * Loads the plugin.
  */
-function start_b3_api() {
+function start_b3_json_rest_api() {
 	$plugin = new B3_JSON_REST_API;
 	add_action( 'plugins_loaded', array( $plugin, 'load' ) );
 	return $plugin;
 }
 
-start_b3_api();
+start_b3_json_rest_api();
