@@ -21,12 +21,6 @@ class B3_Router {
 	protected $conf = '';
 
 	/**
-	 * Controller instances.
-	 * @var array
-	 */
-	protected $controllers = array();
-
-	/**
 	 * [__construct description]
 	 * @param WP_JSON_Server $server    WP-API server instance.
 	 * @param string 		 $file      [description]
@@ -69,32 +63,6 @@ class B3_Router {
 	}
 
 	/**
-	 * Get controller instances created by the router.
-	 *
-	 * @return array Controller instances.
-	 */
-	public function get_controllers() {
-		return $this->controllers;
-	}
-
-	/**
-	 * [get_controller description]
-	 * @param  [type] $class [description]
-	 * @return [type]        [description]
-	 */
-	public function get_controller( $class ) {
-		if ( ! class_exists( $class ) ) {
-			return false;
-		}
-
-		if ( empty( $this->controllers[ $class ] ) ) {
-			$this->controllers[ $class ] = new $class;
-		}
-
-		return $this->controllers[ $class ];
-	}
-
-	/**
 	 * [callback description]
 	 * @param  [type]   $callback [description]
 	 * @return callable           [description]
@@ -103,9 +71,11 @@ class B3_Router {
 
 		if ( strpos( $callback, '->' ) ) {
 			list( $class, $method ) = explode( '->', $callback );
-			$instance = $this->get_controller( $class );
 
-			return method_exists( $instance, $method ) ? array( $instance, $method ) : false;
+			$instance      = $this->server->controllers->register( $class );
+			$is_controller = method_exists( $instance, $method ) && $instance instanceOf WP_JSON_Controller;
+
+			return $is_controller ? array( $instance, $method ) : false;
 		}
 
 		if ( strpos( $callback, '::' ) ) {

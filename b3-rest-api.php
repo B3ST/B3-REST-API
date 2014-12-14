@@ -45,56 +45,16 @@ class B3_JSON_REST_API {
 	protected $plugin_slug = 'b3-rest-api';
 
 	/**
-	 * Plugin instance.
-	 * @var B3_JSON_REST_API
-	 */
-	protected static $instance = null;
-
-	/**
 	 * WP API server.
-	 * @var WP_JSON_ResponseHandler
+	 * @var WP_JSON_Server
 	 */
 	protected $server;
 
 	/**
-	 * Resources provided by this extension.
-	 * @var array
+	 * B3 API router.
+	 * @var B3_Router
 	 */
-	protected $resources = array();
-
-	/**
-	 * Plugin constructor.
-	 *
-	 * @fixme JIBBERS CRABST WHY AM I CALLING ADD_ACTION() IN A CONSTRUCTOR
-	 */
-	public function __construct() {
-
-		$this->resources = array(
-			'B3_Comment'  => null,
-			'B3_Sidebar'  => null,
-		);
-
-		add_action( 'init', array( $this, 'init' ), 99 );
-	}
-
-	/**
-	 * Retrieve or create an instance of the plugin to be used by
-	 * WordPress.
-	 *
-	 * It is NOT my intention for this to be a singleton, which is
-	 * why the constructor is exposed and additonal instances may be
-	 * created (for testing, etc.)
-	 *
-	 * @return B3_JSON_REST_API Plugin instance.
-	 */
-	public static function get_instance() {
-
-		if ( null === static::$instance ) {
-			static::$instance = new static;
-		}
-
-		return static::$instance;
-	}
+	protected $router;
 
 	/**
 	 * Retrieve this plugin slug.
@@ -106,46 +66,75 @@ class B3_JSON_REST_API {
 	}
 
 	/**
-	 * Initializes the plugin.
-	 *
-	 * Called by the `init` action.
+	 * [get_server description]
+	 * @return [type] [description]
 	 */
-	public function init() {
-		B3_Loader::ready();
+	public function get_server() {
+		return $this->server;
+	}
 
-		$domain = $this->plugin_slug;
-		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
-
-		// Setup internationalization support:
-		load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . $domain . '/' . $domain . '-' . $locale . '.mo' );
-		load_plugin_textdomain( $domain, FALSE, basename( plugin_dir_path( dirname( __FILE__ ) ) ) . '/languages/' );
-
-		add_action( 'wp_json_server_before_serve', array( $this, 'init_router' ), 99, 1 );
+	public function load() {
+		add_action( 'init', array( $this, 'init_load' ), 99 );
+		add_action( 'init', array( $this, 'init_i18n' ), 99 );
+		add_action( 'wp_json_server_before_serve', array( $this, 'init_server' ), 99, 1 );
 	}
 
 	/**
-	 * Initialize the router.
+	 * Loads the plugin classes.
+	 *
+	 * Called by the `init` action.
+	 */
+	public function init_load() {
+		B3_Loader::ready();
+	}
+
+	/**
+	 * Setup internationalization support.
+	 *
+	 * Called by the `init` action.
+	 *
+	 * @return [type] [description]
+	 */
+	public function init_i18n() {
+		$domain = $this->plugin_slug;
+		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+		load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . $domain . '/' . $domain . '-' . $locale . '.mo' );
+		load_plugin_textdomain( $domain, FALSE, basename( plugin_dir_path( dirname( __FILE__ ) ) ) . '/languages/' );
+	}
+
+	/**
+	 * Initialize the server.
 	 *
 	 * Called by the `wp_json_server_before_serve` action.
 	 */
-	public function init_router( WP_JSON_Server $server ) {
+	public function init_server( WP_JSON_Server $server ) {
+		$this->server              = new B3_Server( $server );
+		$this->server->controllers = new B3_Controller_Registry( $this->server );
 
-		$router = new B3_Router( $server, dirname( __FILE__ ) . '/conf/routes' );
+		$router = new B3_Router( $this->server, dirname( __FILE__ ) . '/conf/routes' );
 		$router->init();
 
-		$posts_controller = $router->get_controller( 'B3_Posts_Controller' );
+		$this->server->router = $this->router;
+
+		$posts_controller = $this->server->controllers->get( 'B3_Posts_Controller' );
 
 		add_filter( 'json_prepare_post', array( $posts_controller, 'json_prepare_post' ), 99, 3 );
 
 		// Get rid of this when we're done:
-		$this->server = $server;
-		foreach ( $this->resources as $class => $resource ) {
-			include_once dirname( __FILE__ ) . '/resources/' . $class . '.php';
-			$this->resources[ $class ] = $resource = new $class( $server );
-			add_filter( 'json_endpoints', array( $resource, 'register_routes' ), 10, 1 );
-		}
+		include_once dirname( __FILE__ ) . '/resources/B3_Comment.php';
+		$resource = new B3_Comment( $server );
+		add_filter( 'json_endpoints', array( $resource, 'register_routes' ), 10, 1 );
 	}
 
 }
 
-add_action( 'plugins_loaded', array( 'B3_JSON_REST_API', 'get_instance' ) );
+/**
+ * Loads the plugin.
+ */
+function start_b3_api() {
+	$plugin = new B3_JSON_REST_API;
+	add_action( 'plugins_loaded', array( $plugin, 'load' ) );
+	return $plugin;
+}
+
+start_b3_api();
