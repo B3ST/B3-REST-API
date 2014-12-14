@@ -108,11 +108,10 @@ class B3_JSON_REST_API {
 	public function init_server( WP_JSON_Server $server ) {
 		$this->server              = new B3_Server( $server );
 		$this->server->controllers = new B3_Controller_Registry( $this->server );
+		$router                    = new B3_Router( $this->server );
 
-		$router = new B3_Router( $this->server, dirname( __FILE__ ) . '/conf/routes' );
-		$router->init();
-
-		$this->server->router = $this->router;
+		// Load configuration file:
+		$router->add_conf( dirname( __FILE__ ) . '/conf/routes' );
 
 		$posts_controller = $this->server->controllers->get( 'B3_Posts_Controller' );
 

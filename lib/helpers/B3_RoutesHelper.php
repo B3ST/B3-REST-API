@@ -318,10 +318,8 @@ class B3_RoutesHelper {
 	 */
 	protected function debug_tokens() {
 		foreach ( $this->routes as $route => $resource ) {
-			$tokens = array();
 			preg_match_all( '#[:*]([^/:*()]+)#', $route, $tokens );
-			$resource['tokens']     = $tokens[1];
-			$this->routes[ $route ] = $resource;
+			$this->routes[ $route ]['_debug']['tokens'] = $tokens[1];
 		}
 	}
 

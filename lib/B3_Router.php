@@ -9,37 +9,44 @@ class B3_Router {
 	protected $server;
 
 	/**
-	 * API namespace.
-	 * @var string
-	 */
-	protected $namespace = 'b3';
-
-	/**
-	 * Routes configuration.
-	 * @var string
-	 */
-	protected $conf = '';
-
-	/**
 	 * [__construct description]
 	 * @param WP_JSON_Server $server    WP-API server instance.
 	 * @param string 		 $file      [description]
 	 * @param string 		 $namespace [description]
 	 */
-	public function __construct( WP_JSON_Server $server, $conf = '' ) {
+	public function __construct( WP_JSON_Server $server ) {
 		$this->server = $server;
-		$this->conf   = realpath( $conf );
 	}
 
 	/**
 	 * Read routes file and generate routes.
+	 *
+	 * @param string $filename  Configuration file path.
+	 * @param string $namespace Routes namespace.
 	 */
-	public function init() {
-		if ( empty( $this->conf ) || ! file_exists( $this->conf ) ) {
+	public function add_conf( $filename, $namespace = 'b3' ) {
+
+		if ( empty( $filename ) ) {
 			return;
 		}
 
-		$routes  = file( $this->conf );
+		$filename = realpath( $filename );
+
+		if ( ! file_exists( $filename ) ) {
+			return;
+		}
+
+		$this->parse_conf( $filename, $namespace );
+	}
+
+	/**
+	 * Parse route configuration file.
+	 *
+	 * @param  string $file      Route configuration file name.
+	 * @param  string $namespace Routes namespace.
+	 */
+	protected function parse_conf( $filename, $namespace ) {
+		$routes  = file( $filename );
 		$methods = implode( '|', array( 'GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS' ) );
 
 		foreach ( $routes as $route ) {
@@ -58,7 +65,7 @@ class B3_Router {
 				continue;
 			}
 
-			$this->add_route( $method, $pattern, $callback );
+			$this->add_route( $pattern, $callback, $method, $namespace );
 		}
 	}
 
@@ -90,19 +97,20 @@ class B3_Router {
 	/**
 	 * Add a route.
 	 *
-	 * @param [type] $method   [description]
-	 * @param [type] $pattern  [description]
-	 * @param [type] $callback [description]
-	 * @param array  $args     [description]
+	 * @param [type] $pattern   [description]
+	 * @param [type] $callback  [description]
+	 * @param [type] $method    Accepted request method (defaults to 'GET').
+	 * @param string $namespace Endpoint namespace (defaults to 'b3').
+	 * @param array  $args      Endpoint arguments (defaults to empty).
 	 */
-	protected function add_route( $method, $pattern, $callback, $args = array() ) {
+	protected function add_route( $pattern, $callback, $method = 'GET', $namespace = 'b3', $args = array() ) {
 		$args = array(
 			'methods'  => $method,
 			'callback' => $callback,
 			'args'     => $args,
 		);
 
-		register_json_route( $this->namespace, $pattern, $args );
+		register_json_route( $namespace, $pattern, $args );
 	}
 
 }

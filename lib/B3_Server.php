@@ -15,12 +15,6 @@ class B3_Server extends WP_JSON_Server {
     public $controllers;
 
     /**
-     * [$router description]
-     * @var B3_Router
-     */
-    public $router;
-
-    /**
      * [__construct description]
      * @param [type] $server [description]
      */
