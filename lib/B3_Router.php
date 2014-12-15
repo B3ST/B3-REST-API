@@ -9,24 +9,9 @@ class B3_Router {
 	protected $server;
 
 	/**
-	 * Supported HTTP method verbs
-	 * @var array
-	 */
-	protected $supported_methods = array(
-		'GET',
-		'POST',
-		'PUT',
-		'DELETE',
-		'HEAD',
-		'PATCH',
-		'OPTIONS',
-	);
-
-	/**
-	 * [__construct description]
-	 * @param WP_JSON_Server $server    WP-API server instance.
-	 * @param string 		 $file      [description]
-	 * @param string 		 $namespace [description]
+	 * Router constructor.
+	 *
+	 * @param WP_JSON_Server $server WP-API server instance.
 	 */
 	public function __construct( WP_JSON_Server $server ) {
 		$this->server = $server;
@@ -62,20 +47,26 @@ class B3_Router {
 	 * @todo Parse additional route arguments and types.
 	 */
 	protected function parse_conf( $filename, $namespace ) {
-		$routes  = file( $filename );
-		$methods = implode( '|', $this->supported_methods );
+		$routes   = file( $filename );
+
+		$preg_name     = '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*';
+		$preg_method   = '(?P<method> GET | POST | PUT | DELETE | HEAD | PATCH | OPTIONS )';
+		$preg_pattern  = '(?P<pattern> [^\s]+ )';
+		$preg_callback = "(?P<callback> $preg_name ((::|->) $preg_name)? )";
+
+		$preg_conf     = "/^ \s* $preg_method \s+ $preg_pattern \s+ $preg_callback /x";
 
 		foreach ( $routes as $route ) {
-			$matches = array();
-			$match   = preg_match( "/^\s*($methods)\s+([^\s]+)\s+([^\s]+)/", $route, $matches );
+
+			$match = preg_match( $preg_conf, $route, $matches );
 
 			if ( ! $match ) {
 				continue;
 			}
 
-			$method   = $matches[1];
-			$pattern  = $matches[2];
-			$callback = $this->parse_callback( $matches[3] );
+			$method   = $matches['method'];
+			$pattern  = $matches['pattern'];
+			$callback = $this->parse_callback( $matches['callback'] );
 
 			if ( empty( $callback ) ) {
 				continue;
