@@ -17,6 +17,10 @@ class B3_Loader {
 			'B3_Settings_Controller',
 			'B3_Sidebars_Controller',
 		),
+		'model' => array(
+			'B3_Comment_Model',
+			'B3_Post_Model',
+		),
 		'helpers' => array(
 			'B3_RoutesHelper',
 			'B3_SettingsHelper',
