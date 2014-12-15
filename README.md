@@ -25,49 +25,68 @@ The B3 REST API Extensions plugin enables the following additional endpoints.
 
 To make it easier to tell B3 extensions apart from the other endpoints, all of our additions are prepended by `b3:`.
 
+### Breaking changes in `develop`
+
+We're adapting our API controllers to the new format proposed by the WP-API team and introducing the `b3` namespace, and as a result endpoints will undergo a few (mostly minor) changes.
+
+The tables below should give you an indication of how things are going to work in the future.
+
 ### Comments
 
 We provide an alternative implementation of the Comments resource that allows retrieving comments without having to know which post they belong to.
 
-* `GET` `/b3:comments/<id>`
-* `GET` `/b3:comments/<id>/b3:replies`
-* `POST` `/b3:comments/<id>/b3:replies`
-* `GET` `/media/<id>/b3:replies`
-* `POST` `/media/<id>/b3:replies`
-* `GET` `/pages/<id>/b3:replies`
-* `POST` `/pages/<id>/b3:replies`
-* `GET` `/posts/<id>/b3:replies`
-* `POST` `/posts/<id>/b3:replies`
+|        | `master`                       | `develop`                   |
+| ------ | ------------------------------ | --------------------------- |
+| `GET`  | `/b3:comments/<id>`            | `/b3/comments/<id>`         |
+| `GET`  | `/b3:comments/<id>/b3:replies` | `/b3/comments/<id>/replies` |
+| `POST` | `/b3:comments/<id>/b3:replies` | `/b3/comments/<id>/replies` |
+| `GET`  | `/media/<id>/b3:replies`       | `/b3/media/<id>/replies`    |
+| `POST` | `/media/<id>/b3:replies`       | `/b3/media/<id>/replies`    |
+| `GET`  | `/pages/<id>/b3:replies`       | `/b3/pages/<id>/replies`    |
+| `POST` | `/pages/<id>/b3:replies`       | `/b3/pages/<id>/replies`    |
+| `GET`  | `/posts/<id>/b3:replies`       | `/b3/posts/<id>/replies`    |
+| `POST` | `/posts/<id>/b3:replies`       | `/b3/posts/<id>/replies`    |
 
 ### Media
 
 This endpoint provides a way to fetch a media attachment by its slug.
 
-* `GET` `/media/b3:slug:<slug>`
+|        | `master`                       | `develop`                   |
+| ------ | ------------------------------ | --------------------------- |
+| `GET`  | `/media/b3:slug:<slug>`        | `/b3/media/slug/<slug>`     |
 
 ### Posts
 
 This endpoint provides a way to fetch a post by its slug.
 
-* `GET` `/posts/b3:slug:<slug>`
+|        | `master`                       | `develop`                   |
+| ------ | ------------------------------ | --------------------------- |
+| `GET`  | `/posts/b3:slug:<slug>`        | `/b3/posts/slug/<slug>`     |
 
 ### Menus
 
 We provide endpoints to fetch all Menus registered by the theme as well as the menu items configured in the WordPress Admin.
 
-* `GET` `/b3:menus`
-* `GET` `/b3:menus/<location>`
+|        | `master`                       | `develop`                   |
+| ------ | ------------------------------ | --------------------------- |
+| `GET`  | `/b3:menus`                    | `/b3/menus`                 |
+| `GET`  | `/b3:menus/<location>`         | `/b3/menus/<location>`      |
 
 ### Sidebars
 
 Similar to Menus, we allow fetching all widget areas registered by the theme as well as their widgets and widget content.
 
-* `GET` `/b3:sidebars`
-* `GET` `/b3:sidebars/<index>`
+|        | `master`                       | `develop`                   |
+| ------ | ------------------------------ | --------------------------- |
+| `GET`  | `/b3:sidebars`                 | `/b3/sidebars`              |
+| `GET`  | `/b3:sidebars/<index>`         | `/b3/sidebars/<index>`      |
 
 ### Settings
 
 Finally, this plugin exposes WordPress settings through the API.  It wraps the `get_bloginfo()` function but exposes a few additional site options as well as the pretty permalinks table.
 
-* `GET` `/b3:settings`
-* `GET` `/b3:settings/<option>`
+|        | `master`                       | `develop`                   |
+| ------ | ------------------------------ | --------------------------- |
+| `GET`  | `/b3:settings`                 | `/b3/settings`              |
+| `GET`  | `/b3:settings/<option>`        | `/b3/settings/<option>`     |
+
