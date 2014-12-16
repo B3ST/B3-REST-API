@@ -5,10 +5,10 @@ GET     /pages/(?P<id>\d+)/replies      B3_Comments_Controller->get_items
 GET     /media/(?P<id>\d+)/replies      B3_Comments_Controller->get_items
 GET     /comments/(?P<id>\d+)/replies   B3_Comments_Controller->get_subitems
 
-POST    /posts/(?P<id>\d+)              B3_Comments_Controller->create_item
-POST    /pages/(?P<id>\d+)              B3_Comments_Controller->create_item
-POST    /media/(?P<id>\d+)              B3_Comments_Controller->create_item
-POST    /comments/(?P<id>\d+)           B3_Comments_Controller->create_subitem
+POST    /posts/(?P<id>\d+)/replies      B3_Comments_Controller->create_item
+POST    /pages/(?P<id>\d+)/replies      B3_Comments_Controller->create_item
+POST    /media/(?P<id>\d+)/replies      B3_Comments_Controller->create_item
+POST    /comments/(?P<id>\d+)/replies   B3_Comments_Controller->create_subitem
 
 GET     /comments/(?P<id>\d+)           B3_Comments_Controller->get_item
 PUT     /comments/(?P<id>\d+)           B3_Comments_Controller->update_item
