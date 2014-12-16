@@ -17,6 +17,11 @@ class B3_Posts_Controller extends WP_JSON_Controller {
 		$controller = new WP_JSON_Posts();
 		$post       = get_page_by_path( $slug, OBJECT, get_post_types( array( 'show_in_json' => true ) ) );
 
+		if ( empty( $post ) ) {
+			return new WP_Error( 'json_post_not_found',
+				__( 'Not found.', 'b3-rest-api' ), array( 'status' => 404 ) );
+		}
+
 		return $controller->get( $post->ID );
 	}
 
