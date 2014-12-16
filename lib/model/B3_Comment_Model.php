@@ -59,25 +59,7 @@ class B3_Comment_Model {
 			}
 		}
 
-		$error = null;
-
-		if ( get_option( 'require_name_email' ) ) {
-			if ( empty( $comment['comment_author_email'] ) || '' === $comment['comment_author'] ) {
-				$error = __( 'Comment author name and email are required.', 'b3-rest-api' );
-			}
-
-			if ( ! is_email( $comment['comment_author_email'] ) ) {
-				$error = __( 'A valid email address is required.', 'b3-rest-api' );
-			}
-		}
-
-		if ( empty( $comment['comment_content'] ) ) {
-			$error = __( 'Your comment must not be empty.', 'b3-rest-api' );
-		}
-
-		if ( ! empty( $error ) ) {
-			throw new B3_API_Exception( 'json_bad_comment', $error, 400 );
-		}
+		static::validate_raw_data( $comment );
 
 		$comment_id = wp_new_comment( $comment );
 
@@ -87,6 +69,32 @@ class B3_Comment_Model {
 		}
 
 		return static::get_instance_by_id( $comment_id );
+	}
+
+	/**
+	 * Validate raw comment data.
+	 * @param  array $data Raw comment data.
+	 */
+	protected static function validate_raw_data() {
+		$error = null;
+
+		if ( get_option( 'require_name_email' ) ) {
+			if ( empty( $data['comment_author_email'] ) || '' === $data['comment_author'] ) {
+				$error = __( 'Comment author name and email are required.', 'b3-rest-api' );
+			}
+
+			if ( ! is_email( $data['comment_author_email'] ) ) {
+				$error = __( 'A valid email address is required.', 'b3-rest-api' );
+			}
+		}
+
+		if ( empty( $data['comment_content'] ) ) {
+			$error = __( 'Your comment must not be empty.', 'b3-rest-api' );
+		}
+
+		if ( ! empty( $error ) ) {
+			throw new B3_API_Exception( 'json_bad_comment', $error, 400 );
+		}
 	}
 
 	/**
