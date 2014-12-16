@@ -178,14 +178,14 @@ class B3_Comment_Model {
 		$response = array(
 			'ID'       => (int) $this->comment->comment_ID,
 			'post'     => (int) $this->comment->comment_post_ID,
-			'content'  => apply_filters( 'comment_text', $this->comment->comment_content, $this->comment ),
-			'status'   => $this->get_response_status(),
-			'type'     => apply_filters( 'get_comment_type', $this->comment->comment_type ),
 			'parent'   => (int) $this->comment->comment_parent,
-			'author'   => $this->get_response_author(),
+			'content'  => apply_filters( 'comment_text', $this->comment->comment_content, $this->comment ),
+			'type'     => apply_filters( 'get_comment_type', $this->comment->comment_type ),
 			'date'     => $date->format( 'c' ),
 			'date_tz'  => $date->format( 'e' ),
 			'date_gmt' => date( 'c', strtotime( $this->comment->comment_date_gmt ) ),
+			'author'   => $this->get_response_author(),
+			'status'   => $this->get_response_status(),
 			'_links'   => $this->get_response_links(),
 		);
 
