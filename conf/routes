@@ -6,6 +6,9 @@ POST    /posts/(?P<id>\d+)/replies      B3_Comments_Controller->create_item
 GET     /pages/(?P<id>\d+)/replies      B3_Comments_Controller->get_items
 POST    /pages/(?P<id>\d+)/replies      B3_Comments_Controller->create_item
 
+GET     /media/(?P<id>\d+)/replies      B3_Comments_Controller->get_items
+POST    /media/(?P<id>\d+)/replies      B3_Comments_Controller->create_item
+
 GET     /comments/(?P<id>\d+)/replies   B3_Comments_Controller->get_subitems
 POST    /comments/(?P<id>\d+)/replies   B3_Comments_Controller->create_subitem
 
@@ -22,6 +25,7 @@ GET     /menus/(?P<location>.+)         B3_Menus_Controller->get_item
 # Posts
 
 GET     /posts/slug/(?P<slug>.+)        B3_Posts_Controller->get_item
+GET     /media/slug/(?P<slug>.+)        B3_Posts_Controller->get_item
 
 # Settings
 
