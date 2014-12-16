@@ -73,9 +73,12 @@ class B3_Comment_Model {
 
 	/**
 	 * Validate raw comment data.
-	 * @param  array $data Raw comment data.
+	 *
+	 * @param array $data Raw comment data.
+	 *
+	 * @throws B3_API_Exception
 	 */
-	protected static function validate_raw_data() {
+	protected static function validate_raw_data( $data ) {
 		$error = null;
 
 		if ( get_option( 'require_name_email' ) ) {
