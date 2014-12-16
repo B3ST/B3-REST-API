@@ -101,7 +101,7 @@ class B3_Post_Model {
 	 * Checks whether the post is readable by the current user.
 	 * @return boolean True if the post is readable by the current user, otherwise false.
 	 */
-	protected function is_readable() {
+	public function is_readable() {
 		$post_type = get_post_type_object( $this->post->post_type );
 
 		// Ensure the post type can be read
@@ -139,7 +139,7 @@ class B3_Post_Model {
 	 *
 	 * @todo Check whether the current logged in user has commenting privileges.
 	 */
-	protected function is_repliable() {
+	public function is_repliable() {
 		return comments_open( $this->post->ID );
 	}
 
