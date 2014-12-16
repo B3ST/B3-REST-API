@@ -12,19 +12,13 @@ class B3_Comments_Controller extends WP_JSON_Controller {
 	 */
 	public function get_items( $request ) {
 		$id   = (int) $request->get_param( 'id' );
-		$post = B3_Post_Model::get_instance_by_id( $id );
 
-		if ( ! $id || is_wp_error( $post ) ) {
-			return b3_api_error( 'json_post_invalid_id',
-				__( 'Invalid post ID.', 'b3-rest-api' ), 404 );
+		try {
+			$post     = B3_Post_Model::get_instance_by_id( $id );
+			$comments = $post->get_replies();
+		} catch ( B3_API_Exception $exception ) {
+			return $exception->get_wp_error();
 		}
-
-		if ( ! $post->is_readable() ) {
-			return b3_api_error( 'json_user_cannot_read',
-				__( 'Sorry, you cannot read this post.', 'b3-rest-api' ), 401 );
-		}
-
-		$comments = $post->get_replies();
 
 		foreach ( $comments as &$comment ) {
 			$comment = $this->prepare_item_for_response( $comment, $request );
@@ -40,23 +34,12 @@ class B3_Comments_Controller extends WP_JSON_Controller {
 	 */
 	public function get_subitems( $request ) {
 		$id      = (int) $request->get_param( 'id' );
-		$comment = B3_Comment_Model::get_instance_by_id( $id );
 
-		if ( ! $id ) {
-			return b3_api_error( 'json_comment_invalid_id',
-				__( 'Invalid comment ID.', 'b3-rest-api' ), 404 );
-		}
-
-		if ( ! $comment->is_readable() ) {
-			return b3_api_error( 'json_user_cannot_read',
-				__( 'Sorry, you cannot read this post.', 'b3-rest-api' ), 401 );
-		}
-
-		$comments = $comment->get_replies();
-
-		if ( empty( $comments ) ) {
-			return b3_api_error( 'json_user_not_found',
-				__( 'No replies to this comment were found.', 'b3-rest-api' ), 404 );
+		try {
+			$comment  = B3_Comment_Model::get_instance_by_id( $id );
+			$comments = $comment->get_replies();
+		} catch ( B3_API_Exception $exception ) {
+			return $exception->get_wp_error();
 		}
 
 		foreach ( $comments as &$comment ) {
@@ -73,16 +56,11 @@ class B3_Comments_Controller extends WP_JSON_Controller {
 	 */
 	public function get_item( $request ) {
 		$id      = (int) $request->get_param( 'id' );
-		$comment = B3_Comment_Model::get_instance_by_id( $id );
 
-		if ( ! $id || is_wp_error( $comment ) ) {
-			return b3_api_error( 'json_comment_invalid_id',
-				__( 'Invalid comment ID.', 'b3-rest-api' ), 404 );
-		}
-
-		if ( ! $comment->is_readable() ) {
-			return b3_api_error( 'json_user_cannot_read',
-				__( 'Sorry, you cannot read replies to this post.', 'b3-rest-api' ), 403 );
+		try {
+			$comment = B3_Comment_Model::get_instance_by_id( $id );
+		} catch ( B3_API_Exception $exception ) {
+			return $exception->get_wp_error();
 		}
 
 		return $this->prepare_item_for_response( $comment, $request );

@@ -24,8 +24,13 @@ class B3_Post_Model {
 		$post = get_post( $id );
 
         if ( is_wp_error( $post ) ) {
-            return $post;
+            throw new B3_API_Exception( null, null, null, $post );
         }
+
+		if ( empty( $post ) ) {
+			throw new B3_API_Exception( 'json_post_not_found',
+				__( 'Post not found.', 'b3-rest-api' ), 404 );
+		}
 
 		return new static( $post );
 	}
@@ -43,10 +48,20 @@ class B3_Post_Model {
 	 * @return array|WP_Error [description]
 	 */
 	public function get_replies() {
+		if ( ! $this->is_readable() ) {
+			throw new B3_API_Exception( 'json_user_cannot_read',
+				__( 'Sorry, you cannot read this post.', 'b3-rest-api' ), 401 );
+		}
+
 		$comments = get_comments( array( 'post_id' => $this->post->ID ) );
 
 		if ( is_wp_error( $comments ) ) {
-			return $comments;
+			throw new B3_API_Exception( null, null, null, $comments );
+		}
+
+		if ( empty( $comments ) ) {
+			throw new B3_API_Exception( 'json_comment_not_found',
+				__( 'No replies found for this post.', 'b3-rest-api' ), 404 );
 		}
 
 		foreach ( $comments as &$comment ) {
@@ -60,7 +75,7 @@ class B3_Post_Model {
 	 * [is_readable description]
 	 * @return boolean [description]
 	 */
-	public function is_readable() {
+	protected function is_readable() {
 		$post_type = get_post_type_object( $this->post->post_type );
 
 		// Ensure the post type can be read

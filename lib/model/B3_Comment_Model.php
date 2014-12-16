@@ -27,7 +27,12 @@ class B3_Comment_Model {
 		$comment = get_comment( $id );
 
 		if ( is_wp_error( $comment ) ) {
-			return $comment;
+			throw new B3_API_Exception( null, null, null, $comment );
+		}
+
+		if ( empty( $comment ) ) {
+			throw new B3_API_Exception( 'json_comment_not_found',
+				__( 'Comment not found.', 'b3-rest-api' ), 404 );
 		}
 
 		return new static( $comment );
@@ -57,7 +62,12 @@ class B3_Comment_Model {
 		$comments = get_comments( array( 'parent' => $this->comment->comment_ID ) );
 
 		if ( is_wp_error( $comments ) ) {
-			return $comments;
+			throw new B3_API_Exception( null, null, null, $comments );
+		}
+
+		if ( empty( $comments ) ) {
+			throw new B3_API_Exception( 'json_comment_not_found',
+				__( 'No replies found for this comment.', 'b3-rest-api' ), 404 );
 		}
 
 		foreach ( $comments as &$comment ) {

@@ -34,6 +34,7 @@ class B3_Loader {
 	protected static $files = array(
 		'B3_Server',
 		'B3_Router',
+		'B3_Exception',
 		'functions',
 	);
 
