@@ -14,9 +14,7 @@ class B3_Posts_Controller extends WP_JSON_Controller {
 	 */
 	public function get_item( $request ) {
 		$slug       = sanitize_text_field( $request->get_param( 'slug' ) );
-
 		$controller = new WP_JSON_Posts();
-
 		$post       = get_page_by_path( $slug, OBJECT, get_post_types( array( 'show_in_json' => true ) ) );
 
 		return $controller->get( $post->ID );

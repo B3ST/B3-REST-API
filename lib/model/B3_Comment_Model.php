@@ -32,6 +32,64 @@ class B3_Comment_Model {
 	}
 
 	/**
+	 * [instance_from_data description]
+	 * @param  [type] $data [description]
+	 * @return [type]       [description]
+	 */
+	public static function new_instance( $data, $post_id = null, $parent_id = null ) {
+		$comment = array(
+			'comment_post_ID'      => $post_id,
+			'comment_parent'       => $parent_id,
+			'comment_content'      => ifsetor( $data['content'] ),
+			'comment_author'       => ifsetor( $data['author']['name'] ),
+			'comment_author_email' => ifsetor( $data['author']['email'] ),
+			'comment_author_url'   => ifsetor( $data['author']['URL'] ),
+			'comment_type'         => 'comment',
+		);
+
+		if ( is_user_logged_in() ) {
+			$user = wp_get_current_user();
+
+			if ( $user && $user->ID ) {
+				$comment['user_ID']              = $user->ID;
+				$comment['user_id']              = $user->ID;
+				$comment['comment_author']       = $user->display_name;
+				$comment['comment_author_email'] = $user->user_email;
+				$comment['comment_author_url']   = $user->user_url;
+			}
+		}
+
+		$error = null;
+
+		if ( get_option( 'require_name_email' ) ) {
+			if ( empty( $comment['comment_author_email'] ) || '' === $comment['comment_author'] ) {
+				$error = __( 'Comment author name and email are required.', 'b3-rest-api' );
+			}
+
+			if ( ! is_email( $comment['comment_author_email'] ) ) {
+				$error = __( 'A valid email address is required.', 'b3-rest-api' );
+			}
+		}
+
+		if ( empty( $comment['comment_content'] ) ) {
+			$error = __( 'Your comment must not be empty.', 'b3-rest-api' );
+		}
+
+		if ( ! empty( $error ) ) {
+			throw new B3_API_Exception( 'json_bad_comment', $error, 400 );
+		}
+
+		$comment_id = wp_new_comment( $comment );
+
+		if ( ! $comment_id ) {
+			throw new B3_API_Exception( 'json_insert_error',
+				__( 'There was an error processing your comment.', 'b3-rest-api' ), 500 );
+		}
+
+		return static::get_instance_by_id( $comment_id );
+	}
+
+	/**
 	 * [validate description]
 	 * @param  [type] $comment [description]
 	 * @return [type]          [description]
@@ -53,9 +111,8 @@ class B3_Comment_Model {
 	 * @return [type]       [description]
 	 */
 	public function reply_with_data( $data ) {
-		$data['comment_parent'] = $this->comment->comment_ID;
 		$post = B3_Post_Model::get_instance_by_id( $this->comment->comment_post_ID );
-		return $post->reply_with_data( $data );
+		return $post->reply_with_data( $data, $this->comment->comment_ID );
 	}
 
 	/**

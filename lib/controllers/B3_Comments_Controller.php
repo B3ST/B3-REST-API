@@ -99,7 +99,7 @@ class B3_Comments_Controller extends WP_JSON_Controller {
 
 		try {
 			$comment     = B3_Comment_Model::get_instance_by_id( $id );
-			$comment_id  = $post->reply_with_data( $data );
+			$comment_id  = $comment->reply_with_data( $data );
 			$new_comment = B3_Comment_Model::get_instance_by_id( $comment_id );
 		} catch ( B3_API_Exception $exception ) {
 			return $exception->get_wp_error();
