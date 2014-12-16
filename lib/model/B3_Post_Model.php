@@ -104,8 +104,8 @@ class B3_Post_Model {
 	}
 
 	/**
-	 * [is_readable description]
-	 * @return boolean [description]
+	 * Checks whether the post is readable by the current user.
+	 * @return boolean True if the post is readable by the current user, otherwise false.
 	 */
 	protected function is_readable() {
 		$post_type = get_post_type_object( $this->post->post_type );
@@ -122,9 +122,9 @@ class B3_Post_Model {
 
 		// Can we read the parent if we're inheriting?
 		if ( 'inherit' === $this->post->post_status && $this->post->post_parent > 0 ) {
-			$parent = get_post( $this->post->post_parent );
+			$parent = static::get_instance_by_id( $this->post->post_parent );
 
-			if ( $this->is_readable( $parent ) ) {
+			if ( $parent->is_readable() ) {
 				return true;
 			}
 		}
@@ -139,8 +139,11 @@ class B3_Post_Model {
 	}
 
 	/**
-	 * [is_repliable description]
-	 * @return boolean [description]
+	 * Checks whether the post accepts comments.
+	 *
+	 * @return boolean True if the post can be commented on, otherwise false.
+	 *
+	 * @todo Check whether the current logged in user has commenting privileges.
 	 */
 	protected function is_repliable() {
 		return comments_open( $this->post->ID );
