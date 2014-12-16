@@ -20,6 +20,8 @@ class B3_Loader {
 		'model' => array(
 			'B3_Comment_Model',
 			'B3_Post_Model',
+			'B3_Routes_Model',
+			'B3_Settings_Model',
 		),
 		'helpers' => array(
 			'B3_RoutesHelper',
