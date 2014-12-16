@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * `WP_Post` wrapper.
+ *
+ * We would have preferred to write a decorator, but `WP_Post` is
+ * declared as `final`. :(
+ */
 class B3_Post_Model {
 
 	/**
@@ -16,16 +22,12 @@ class B3_Post_Model {
 	}
 
 	/**
-	 * [get_instance_by_id description]
+	 * [get_instance description]
 	 * @param  [type] $id [description]
 	 * @return [type]     [description]
 	 */
-	public static function get_instance_by_id( $id ) {
-		$post = get_post( $id );
-
-        if ( is_wp_error( $post ) ) {
-            throw new B3_API_Exception( null, null, null, $post );
-        }
+	public static function get_instance( $id ) {
+		$post = WP_Post::get_instance( $id );
 
 		if ( empty( $post ) ) {
 			throw new B3_API_Exception( 'json_post_not_found',
@@ -49,14 +51,6 @@ class B3_Post_Model {
 			throw new B3_API_Exception( 'json_post_not_found',
 				__( 'Not found.', 'b3-rest-api' ), 404 );
 		}
-	}
-
-	/**
-	 * [get_id description]
-	 * @return [type] [description]
-	 */
-	public function get_id() {
-		return $this->post->ID;
 	}
 
 	/**
@@ -122,7 +116,7 @@ class B3_Post_Model {
 
 		// Can we read the parent if we're inheriting?
 		if ( 'inherit' === $this->post->post_status && $this->post->post_parent > 0 ) {
-			$parent = static::get_instance_by_id( $this->post->post_parent );
+			$parent = static::get_instance( $this->post->post_parent );
 
 			if ( $parent->is_readable() ) {
 				return true;

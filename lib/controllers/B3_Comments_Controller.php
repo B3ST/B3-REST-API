@@ -14,7 +14,7 @@ class B3_Comments_Controller extends WP_JSON_Controller {
 		$id = (int) $request->get_param( 'id' );
 
 		try {
-			$post     = B3_Post_Model::get_instance_by_id( $id );
+			$post     = B3_Post_Model::get_instance( $id );
 			$comments = $post->get_replies();
 		} catch ( B3_API_Exception $exception ) {
 			return $exception->get_wp_error();
@@ -36,7 +36,7 @@ class B3_Comments_Controller extends WP_JSON_Controller {
 		$id = (int) $request->get_param( 'id' );
 
 		try {
-			$comment  = B3_Comment_Model::get_instance_by_id( $id );
+			$comment  = B3_Comment_Model::get_instance( $id );
 			$comments = $comment->get_replies();
 		} catch ( B3_API_Exception $exception ) {
 			return $exception->get_wp_error();
@@ -58,7 +58,7 @@ class B3_Comments_Controller extends WP_JSON_Controller {
 		$id = (int) $request->get_param( 'id' );
 
 		try {
-			$comment = B3_Comment_Model::get_instance_by_id( $id );
+			$comment = B3_Comment_Model::get_instance( $id );
 		} catch ( B3_API_Exception $exception ) {
 			return $exception->get_wp_error();
 		}
@@ -76,9 +76,9 @@ class B3_Comments_Controller extends WP_JSON_Controller {
 		$data = $request->get_params();
 
 		try {
-			$post        = B3_Post_Model::get_instance_by_id( $id );
+			$post        = B3_Post_Model::get_instance( $id );
 			$comment_id  = $post->reply_with_data( $data );
-			$new_comment = B3_Comment_Model::get_instance_by_id( $comment_id );
+			$new_comment = B3_Comment_Model::get_instance( $comment_id );
 		} catch ( B3_API_Exception $exception ) {
 			return $exception->get_wp_error();
 		}
@@ -98,7 +98,7 @@ class B3_Comments_Controller extends WP_JSON_Controller {
 		$data = $request->get_params();
 
 		try {
-			$comment     = B3_Comment_Model::get_instance_by_id( $id );
+			$comment     = B3_Comment_Model::get_instance( $id );
 			$new_comment = $comment->reply_with_data( $data );
 		} catch ( B3_API_Exception $exception ) {
 			return $exception->get_wp_error();

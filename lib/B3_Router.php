@@ -20,8 +20,13 @@ class B3_Router {
 	/**
 	 * Read routes file and generate routes.
 	 *
+	 * The format is inspired by Play! Framework's routing configuration
+	 * and supports most of its specification.
+	 *
 	 * @param string $filename  Configuration file path.
 	 * @param string $namespace Routes namespace.
+	 *
+	 * @see https://www.playframework.com/documentation/2.0/ScalaRouting
 	 */
 	public function add_conf( $filename, $namespace = 'b3' ) {
 
@@ -41,8 +46,8 @@ class B3_Router {
 	/**
 	 * Parse route configuration file.
 	 *
-	 * @param  string $filename  Route configuration file name.
-	 * @param  string $namespace Routes namespace.
+	 * @param string $filename  Route configuration file name.
+	 * @param string $namespace Routes namespace.
 	 *
 	 * @todo Parse additional route arguments and types.
 	 */
@@ -64,16 +69,44 @@ class B3_Router {
 				continue;
 			}
 
+			$args     = array();
 			$method   = $matches['method'];
-			$pattern  = $matches['pattern'];
+			$pattern  = $this->parse_pattern( $matches['pattern'], $args );
 			$callback = $this->parse_callback( $matches['callback'] );
 
 			if ( empty( $callback ) ) {
 				continue;
 			}
 
-			$this->add_route( $pattern, $callback, $method, $namespace );
+			$this->add_route( $pattern, $callback, $method, $namespace, $args );
 		}
+	}
+
+	/**
+	 * Parse route pattern into a regular expression.
+	 *
+	 * Applies the following transformations:
+	 *
+	 * - `:param` is replaced with `(?P<param>[^/]+)`
+	 * - `*param` is replaced with `(?P<param>.+)`
+	 * - `$param<regex>` is replaced with `(?P<param>regex)`
+	 *
+	 * @param  string $route Route pattern.
+	 * @return string        Route pattern regular expression.
+	 */
+	protected function parse_pattern( $route, $args = array() ) {
+		$preg_name = '([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)';
+
+		// Turn `:param` into a `[^\]+` regular expression
+		$route = preg_replace( "/:$preg_name/i", '(?P<\1>[^/]+)', $route );
+
+		// Turn `*param` into a `.+` regular expression
+		$route = preg_replace( "/\*$preg_name/i", '(?P<\1>.+)', $route );
+
+		// Turn `$param<regex>` into a `regex` regular expression
+		$route = preg_replace( "/\\\$$preg_name\<([^>]+)\>/i", '(?P<\1>\2)', $route );
+
+		return $route;
 	}
 
 	/**
@@ -112,11 +145,11 @@ class B3_Router {
 	/**
 	 * Add a route.
 	 *
-	 * @param [type] $pattern   [description]
-	 * @param [type] $callback  [description]
-	 * @param [type] $method    Accepted request method (defaults to 'GET').
-	 * @param string $namespace Endpoint namespace (defaults to 'b3').
-	 * @param array  $args      Endpoint arguments (defaults to empty).
+	 * @param string   $pattern   [description]
+	 * @param callable $callback  [description]
+	 * @param string   $method    Accepted request method (defaults to 'GET').
+	 * @param string   $namespace Endpoint namespace (defaults to 'b3').
+	 * @param array    $args      Endpoint arguments (defaults to empty).
 	 */
 	protected function add_route( $pattern, $callback, $method = 'GET', $namespace = 'b3', $args = array() ) {
 		$args = array(

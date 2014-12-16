@@ -19,11 +19,11 @@ class B3_Comment_Model {
 	}
 
 	/**
-	 * [get_instance_by_id description]
+	 * [get_instance description]
 	 * @param  int                    $id [description]
 	 * @return B3_Post_Model|WP_Error     [description]
 	 */
-	public static function get_instance_by_id( $id ) {
+	public static function get_instance( $id ) {
 		$comment = get_comment( $id );
 
 		static::validate( $comment );
@@ -68,7 +68,7 @@ class B3_Comment_Model {
 				__( 'There was an error processing your comment.', 'b3-rest-api' ), 500 );
 		}
 
-		return static::get_instance_by_id( $comment_id );
+		return static::get_instance( $comment_id );
 	}
 
 	/**
@@ -122,7 +122,7 @@ class B3_Comment_Model {
 	 * @return [type]       [description]
 	 */
 	public function reply_with_data( $data ) {
-		$post = B3_Post_Model::get_instance_by_id( $this->comment->comment_post_ID );
+		$post = B3_Post_Model::get_instance( $this->comment->comment_post_ID );
 		return $post->reply_with_data( $data, $this->comment->comment_ID );
 	}
 
@@ -132,14 +132,6 @@ class B3_Comment_Model {
 	 */
 	public function get_comment() {
 		return $this->comment;
-	}
-
-	/**
-	 * [get_id description]
-	 * @return [type] [description]
-	 */
-	public function get_id() {
-		return $this->comment->comment_ID;
 	}
 
 	/**
@@ -163,7 +155,7 @@ class B3_Comment_Model {
 	 * @return boolean [description]
 	 */
 	public function is_readable() {
-		$post = B3_Post_Model::get_instance_by_id( $this->comment->comment_post_ID );
+		$post = B3_Post_Model::get_instance( $this->comment->comment_post_ID );
 		return $post->is_readable();
 	}
 
