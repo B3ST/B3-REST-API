@@ -497,6 +497,7 @@ class B3_Comment extends B3_API {
 		}
 
 		$new_comment = array(
+			'comment_type'         => 'comment',
 			'comment_post_ID'      => $post['ID'],
 			'comment_parent'       => ifsetor( $data['parent_comment'] ),
 			'comment_content'      => ifsetor( $data['content'] ),
