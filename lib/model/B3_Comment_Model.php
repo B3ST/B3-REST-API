@@ -26,16 +26,36 @@ class B3_Comment_Model {
 	public static function get_instance_by_id( $id ) {
 		$comment = get_comment( $id );
 
+		static::validate( $comment );
+
+		return new static( $comment );
+	}
+
+	/**
+	 * [validate description]
+	 * @param  [type] $comment [description]
+	 * @return [type]          [description]
+	 */
+	protected static function validate( $comment ) {
 		if ( is_wp_error( $comment ) ) {
 			throw new B3_API_Exception( null, null, null, $comment );
 		}
 
 		if ( empty( $comment ) ) {
 			throw new B3_API_Exception( 'json_comment_not_found',
-				__( 'Comment not found.', 'b3-rest-api' ), 404 );
+				__( 'Not found.', 'b3-rest-api' ), 404 );
 		}
+	}
 
-		return new static( $comment );
+	/**
+	 * [reply_with_data description]
+	 * @param  [type] $data [description]
+	 * @return [type]       [description]
+	 */
+	public function reply_with_data( $data ) {
+		$data['comment_parent'] = $this->comment->comment_ID;
+		$post = B3_Post_Model::get_instance_by_id( $this->comment->comment_post_ID );
+		return $post->reply_with_data( $data );
 	}
 
 	/**
@@ -61,14 +81,7 @@ class B3_Comment_Model {
 	public function get_replies() {
 		$comments = get_comments( array( 'parent' => $this->comment->comment_ID ) );
 
-		if ( is_wp_error( $comments ) ) {
-			throw new B3_API_Exception( null, null, null, $comments );
-		}
-
-		if ( empty( $comments ) ) {
-			throw new B3_API_Exception( 'json_comment_not_found',
-				__( 'No replies found for this comment.', 'b3-rest-api' ), 404 );
-		}
+		static::validate( $comments );
 
 		foreach ( $comments as &$comment ) {
 			$comment = new static( $comment );

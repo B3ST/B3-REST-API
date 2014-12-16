@@ -120,11 +120,6 @@ class B3_JSON_REST_API {
 		add_filter( 'json_prepare_post', array( $posts_controller, 'json_prepare_post' ), 99, 3 );
 
 		$this->server = $server;
-
-		// Get rid of this when we're done:
-		include_once dirname( __FILE__ ) . '/resources/B3_Comment.php';
-		$resource = new B3_Comment( $server );
-		add_filter( 'json_endpoints', array( $resource, 'register_routes' ), 10, 1 );
 	}
 
 }

@@ -36,6 +36,22 @@ class B3_Post_Model {
 	}
 
 	/**
+	 * [validate description]
+	 * @param  [type] $post [description]
+	 * @return [type]       [description]
+	 */
+	protected static function validate( $post ) {
+		if ( is_wp_error( $post ) ) {
+			throw new B3_API_Exception( null, null, null, $post );
+		}
+
+		if ( empty( $post ) ) {
+			throw new B3_API_Exception( 'json_post_not_found',
+				__( 'Not found.', 'b3-rest-api' ), 404 );
+		}
+	}
+
+	/**
 	 * [get_id description]
 	 * @return [type] [description]
 	 */
@@ -69,6 +85,68 @@ class B3_Post_Model {
 		}
 
 		return $comments;
+	}
+
+	/**
+	 * [reply_with_data description]
+	 * @param  [type] $data [description]
+	 * @return [type]       [description]
+	 */
+	public function reply_with_data( $data ) {
+		if ( ! $this->is_readable() || ! $this->is_repliable() ) {
+			throw new B3_API_Exception( 'json_user_cannot_reply',
+				__( 'Sorry, you cannot reply to this post.', 'b3-rest-api' ), 401 );
+		}
+
+		$comment = array(
+			'comment_post_ID'      => $this->post->ID,
+			'comment_parent'       => ifsetor( $data['parent_comment'] ),
+			'comment_content'      => ifsetor( $data['content'] ),
+			'comment_author'       => ifsetor( $data['author']['name'] ),
+			'comment_author_email' => ifsetor( $data['author']['email'] ),
+			'comment_author_url'   => ifsetor( $data['author']['URL'] ),
+		);
+
+		if ( is_user_logged_in() ) {
+			$user = wp_get_current_user();
+
+			if ( $user && $user->ID ) {
+				$comment['user_ID']              = $user->ID;
+				$comment['user_id']              = $user->ID;
+				$comment['comment_author']       = $user->display_name;
+				$comment['comment_author_email'] = $user->user_email;
+				$comment['comment_author_url']   = $user->user_url;
+			}
+		}
+
+		$error = null;
+
+		if ( get_option( 'require_name_email' ) ) {
+			if ( empty( $comment['comment_author_email'] ) || '' === $comment['comment_author'] ) {
+				$error = __( 'Comment author name and email are required.', 'b3-rest-api' );
+			}
+
+			if ( ! is_email( $comment['comment_author_email'] ) ) {
+				$error = __( 'A valid email address is required.', 'b3-rest-api' );
+			}
+		}
+
+		if ( empty( $comment['comment_content'] ) ) {
+			$error = __( 'Your comment must not be empty.', 'b3-rest-api' );
+		}
+
+		if ( ! empty( $message ) ) {
+			throw new B3_API_Exception( 'json_bad_comment', $error, 400 );
+		}
+
+		$comment_id = wp_new_comment( $comment );
+
+		if ( ! $comment_id ) {
+			throw new B3_API_Exception( 'json_insert_error',
+				__( 'There was an error processing your comment.', 'b3-rest-api' ), 500 );
+		}
+
+		return $comment_id;
 	}
 
 	/**
