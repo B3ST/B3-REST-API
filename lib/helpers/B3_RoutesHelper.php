@@ -120,6 +120,11 @@ class B3_RoutesHelper {
 	 */
 	protected function prepare_route_replace( $matches ) {
 		$part         = $matches[1];
+
+		if ( in_array( $part, array( 'year', 'monthnum', 'day' ) ) ) {
+			return '$' . $part . '<\d+>';
+		}
+
 		$hierarchical = is_post_type_hierarchical( $part ) || is_taxonomy_hierarchical( $part );
 		$prefix       = $hierarchical ? '*' : ':';
 
@@ -318,7 +323,7 @@ class B3_RoutesHelper {
 	 */
 	protected function debug_tokens() {
 		foreach ( $this->routes as $route => $resource ) {
-			preg_match_all( '#[:*]([^/:*()]+)#', $route, $tokens );
+			preg_match_all( '#[:*$]([^/:*()<>]+)#', $route, $tokens );
 			$this->routes[ $route ]['_debug']['tokens'] = $tokens[1];
 		}
 	}
