@@ -3,7 +3,7 @@
 /**
  * @todo
  */
-class B3_Posts_Controller extends WP_JSON_Controller {
+class B3_Posts_Controller extends WP_JSON_Posts_Controller {
 
 	/**
 	 * @param WP_JSON_Request $request Full details about the request
