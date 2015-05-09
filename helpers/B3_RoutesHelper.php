@@ -119,10 +119,15 @@ class B3_RoutesHelper {
 	 * @return string          Replacement string.
 	 */
 	protected function prepare_route_replace( $matches ) {
-		$part         = $matches[1];
+		$part = $matches[1];
 
-		if ( in_array( $part, array( 'year', 'monthnum', 'day' ) ) ) {
-			return '$' . $part . '<\d+>';
+		switch ( $part ) {
+			case 'year':
+				return '$' . $part . '<\d{4}>';
+
+			case 'monthnum':
+			case 'day':
+				return '$' . $part . '<\d{2}>';
 		}
 
 		$hierarchical = is_post_type_hierarchical( $part ) || is_taxonomy_hierarchical( $part );
